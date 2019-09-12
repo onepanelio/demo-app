@@ -16,7 +16,7 @@ export default class Camera extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      recording: false
+      recording: false,
     };
   }
 
@@ -90,15 +90,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
   },
-  button: {
-    alignItems: 'center',
-    backgroundColor: '#DDDDDD',
-    padding: 10,
-    width: 300,
-    marginTop: 16,
-  },
   preview: {
     width: '100%',
-    height: '100%'
-  }
+    height: '100%',
+  },
 });

@@ -6,34 +6,86 @@
  * @flow
  */
 
-import React from 'react';
+import React, { Component } from 'react';
 
 
 // REDUX SECTION
 import { configureStore } from 'redux-starter-kit';
 import { Provider } from 'react-redux';
-import { Container, Content } from 'native-base';
-import rootReducer from './src/modules/store';
-import Main from './src/views/Main';
-import Drawer from './src/components/Drawer';
-import SideMenu from './src/views/SideMenu';
 
+// Library
+import SideMenu from 'react-native-side-menu';
+import {
+  Container,
+} from 'native-base';
+import {
+  StatusBar, Linking
+} from 'react-native';
+import rootReducer from './src/modules/store';
+
+// Local
+import Main from './src/views/Main';
+import Menu from './src/views/SideMenu';
 
 const store = configureStore({
   reducer: rootReducer,
 });
 
-const App = () => (
-  <Provider store={store}>
-    <Container>
-      <Content>
-        <Drawer>
-          <SideMenu />
-        </Drawer>
-      </Content>
-      <Main />
-    </Container>
-  </Provider>
-);
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-export default App;
+    this.toggle = this.toggle.bind(this);
+
+    this.state = {
+      isOpen: false,
+      selectedItem: 'Home',
+    };
+  }
+
+  onMenuItemSelected = (item) => {
+    if (item === 'Rate us') {
+      Linking.openURL('https://www.onepanel.io/');
+    } else {
+      this.setState({
+        isOpen: false,
+        selectedItem: item,
+      });
+    }
+  };
+
+  updateMenuState(isOpen) {
+    this.setState({ isOpen });
+  }
+
+  toggle() {
+    const { isOpen } = this.state;
+    this.setState({
+      isOpen: !isOpen,
+    });
+  }
+
+  render() {
+    const { selectedItem, isOpen } = this.state;
+    const menu = (
+      <Menu
+        onItemSelected={this.onMenuItemSelected}
+        selectedItem={selectedItem}
+      />
+    );
+    return (
+      <Provider store={store}>
+        <Container>
+          <SideMenu
+            menu={menu}
+            isOpen={isOpen}
+            onChange={(changedOpenState) => this.updateMenuState(changedOpenState)}
+          >
+            <StatusBar hidden />
+            <Main toggleSideBar={() => this.toggle()} title={selectedItem} />
+          </SideMenu>
+        </Container>
+      </Provider>
+    );
+  }
+}

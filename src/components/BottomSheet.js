@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   },
   panelHeader: {
     height: 32,
-    backgroundColor: 'fff',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },

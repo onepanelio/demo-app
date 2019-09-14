@@ -73,7 +73,7 @@ const pickImage = () => new Promise((resolve, reject) => {
       );
     } else {
       const source = { uri: response.uri };
-      resolve(source);
+      resolve(source.uri);
     }
   });
 });

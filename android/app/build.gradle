@@ -189,6 +189,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-fs')
+    implementation project(':react-native-tensorflow')
     implementation project(':react-native-image-picker')
     implementation project(':react-native-camera')
     implementation fileTree(dir: "libs", include: ["*.jar"])

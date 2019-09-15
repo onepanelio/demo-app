@@ -10,8 +10,10 @@ import AppHeader from '../components/AppHeader';
 import Settings from './SettingsView';
 import About from './AboutView';
 import CameraView from './CameraView';
+import TensorFlow from '../components/TensorFlow';
 
 const getView = (type, that, image) => {
+  TensorFlow();
   switch (type) {
     case 'Image Pre-Processing':
     case 'Object Detection':

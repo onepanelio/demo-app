@@ -12,7 +12,7 @@ import {
 import { List, ListItem, Left } from 'native-base';
 
 import OnePanelHeading from '../assets/onepanel.png';
-import menus from '../assets/subMenus.json';
+import { Navigation as menus } from '../../app.config';
 
 const window = Dimensions.get('window');
 

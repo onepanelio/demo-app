@@ -10,6 +10,7 @@ import {
 import ImagePicker from 'react-native-image-picker';
 import BottomSheet from '../components/BottomSheet';
 import Camera from '../components/Camera';
+import Loader from '../components/Loader';
 
 
 const options = {
@@ -46,8 +47,7 @@ const pickImage = () => new Promise((resolve, reject) => {
         new Error('User tapped custom button ')
       );
     } else {
-      const source = { uri: response.uri };
-      resolve(source.uri);
+      resolve(response);
     }
   });
 });
@@ -56,21 +56,36 @@ const pickImage = () => new Promise((resolve, reject) => {
 export default class CameraView extends Component {
   constructor(props) {
     super(props);
-    // eslint-disable-next-line react/no-unused-state
-    this.state = { image: null };
+    this.state = { processing: false };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const { image } = props;
+    return image ? {
+      image,
+      // On New Image data, process the data
+      processing: (state.image !== props.image) && !state.processing
+    } : null;
+  }
+
+  componentDidUpdate({ processImage }, { image, processing }) {
+    if (processing) {
+      processImage(image);
+    }
   }
 
   render() {
     const {
-      image,
       onImageSelection = () => {},
     } = this.props;
+    const { image, processing } = this.state;
     return (
       <>
+        <Loader loading={processing} />
         <View style={{ width: '100%', height: '100%' }}>
           {image ? (
             <Image
-              source={{ uri: image }}
+              source={image}
               style={{
                 width: '100%',
                 height: '100%',

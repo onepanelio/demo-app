@@ -11,6 +11,7 @@ import Settings from './SettingsView';
 import About from './AboutView';
 import CameraView from './CameraView';
 import TensorFlow from '../components/TensorFlow';
+import { ObjectDetection } from '../services/OnepanelAPI';
 
 const getView = (type, that, image) => {
   TensorFlow();
@@ -21,6 +22,11 @@ const getView = (type, that, image) => {
       return (
         <CameraView
           image={image}
+          processImage={(imageToProcess) => {
+            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`]).then((responseImage) => {
+              that.setState({ image: responseImage });
+            });
+          }}
           onImageSelection={(selectedImage) => {
             that.setState({ image: selectedImage });
           }}
@@ -30,7 +36,12 @@ const getView = (type, that, image) => {
     case 'About':
       return <About />;
     case 'Settings':
-      return <Settings />;
+      return (
+        <Settings settingsUpdate={(key, value) => {
+          that.setState({ [key]: value });
+        }}
+        />
+      );
     case 'Rate us':
       return (
         <Text>

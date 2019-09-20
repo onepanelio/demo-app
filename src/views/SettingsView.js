@@ -129,14 +129,20 @@ export default class Settings extends Component {
   }
 
   componentDidMount() {
-    this.getHistory('ObjectDetectionHistory');
-    this.getHistory('ObjectClassificationHistory');
+    const { settingsUpdate } = this.props;
+    this.getHistory('ObjectDetectionHistory').then((selected) => {
+      settingsUpdate('ObjectDetectionAPI', selected.url);
+    });
+    this.getHistory('ObjectClassificationHistory').then((selected) => {
+      settingsUpdate('ObjectClassificationAPI', selected.url);
+    });
   }
 
   getHistory(key) {
-    _retrieveData(key, []).then((history) => {
+    return _retrieveData(key, []).then((history) => {
       const selected = history.find((x) => x.isSelected);
       this.setState({ [key]: history, [`${key}Selected`]: selected });
+      return selected;
     });
   }
 

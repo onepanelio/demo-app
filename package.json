@@ -8,6 +8,7 @@
     "lint": "eslint *.js **/*.js"
   },
   "dependencies": {
+    "form-data": "^2.5.1",
     "native-base": "^2.13.7",
     "prop-types": "15.7.2",
     "react": "16.8.6",

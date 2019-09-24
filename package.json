@@ -13,6 +13,7 @@
     "react": "16.8.6",
     "react-native": "0.60.5",
     "react-native-camera": "^3.3.0",
+    "react-native-camera-tflite": "^0.0.3",
     "react-native-fs": "^2.14.1",
     "react-native-image-picker": "1.1.0",
     "react-native-side-menu": "1.1.3",

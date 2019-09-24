@@ -23,9 +23,10 @@ const getView = (type, that, image) => {
         <CameraView
           image={image}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`]).then((responseImage) => {
-              that.setState({ image: responseImage });
-            });
+            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`])
+              .then((responseImage) => {
+                that.setState({ image: responseImage });
+              });
           }}
           onImageSelection={(selectedImage) => {
             that.setState({ image: selectedImage });

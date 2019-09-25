@@ -45,10 +45,9 @@ export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/
     data: RNFetchBlob.wrap(video.uri)
   }]).then((res) => {
     console.log(res);
-  })
-    .catch((error) => {
-      console.log(error);
-    });
+  }).catch((error) => {
+    console.log(error);
+  });
 };
 
 export default { ObjectDetection, UploadDataset };

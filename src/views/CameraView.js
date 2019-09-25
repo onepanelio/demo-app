@@ -6,8 +6,10 @@ import {
   Text,
   Button,
   Icon,
+  Toast
 } from 'native-base';
 import ImagePicker from 'react-native-image-picker';
+import ImageZoom from 'react-native-image-pan-zoom';
 import BottomSheet from '../components/BottomSheet';
 import Camera from '../components/Camera';
 import Loader from '../components/Loader';
@@ -15,14 +17,13 @@ import Loader from '../components/Loader';
 
 const options = {
   title: 'Select an image',
-  customButtons: [{ name: 'Select', title: 'Choose Photo from gallery' }],
   storageOptions: {
     skipBackup: true,
     path: 'images',
   },
 };
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const styles = {
   cameraIcon: {
@@ -56,47 +57,84 @@ const pickImage = () => new Promise((resolve, reject) => {
 export default class CameraView extends Component {
   constructor(props) {
     super(props);
-    this.state = { processing: false };
+    this.state = {
+      processing: false, image: null, error: false, upload: false
+    };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { image } = props;
-    return image ? {
+    const { image, srcImage } = props;
+
+    if (state.processing) {
+      const errornousResponse = (image === undefined || image.uri.indexOf('text/html') >= 0);
+      return {
+        image: srcImage === state.image && !errornousResponse ? image : state.image,
+        processing: false,
+        error: errornousResponse
+      };
+    }
+    return {
       image,
-      // On New Image data, process the data
-      processing: (state.image !== props.image) && !state.processing
-    } : null;
+      processing: (Boolean(state.image) && Boolean(image))
+      && (state.image !== image && image !== null),
+      error: false
+    };
   }
 
-  componentDidUpdate({ processImage }, { image, processing }) {
-    if (processing) {
+  componentDidUpdate() {
+    const { processImage } = this.props;
+    const { image, processing, error } = this.state;
+    if (processing && image) {
       processImage(image);
+    }
+    if (error) {
+      Toast.show({
+        text: 'Oops, Its looks like API is down',
+        type: 'danger',
+        position: 'bottom',
+        duration: 5000
+      });
     }
   }
 
   render() {
     const {
       onImageSelection = () => {},
+      processVideo,
+      sliceSize,
+      type,
     } = this.props;
-    const { image, processing } = this.state;
+    const { image, processing, upload } = this.state;
     return (
       <>
-        <Loader loading={processing} />
+        {processing ? <Loader loading={processing} /> : null}
         <View style={{ width: '100%', height: '100%' }}>
           {image ? (
-            <Image
-              source={image}
-              style={{
-                width: '100%',
-                height: '100%',
-                flex: 1,
-                alignSelf: 'center',
-              }}
-            />
+            <ImageZoom
+              cropWidth={width}
+              cropHeight={height}
+              imageWidth={width}
+              imageHeight={height}
+            >
+              <Image
+                source={image}
+                style={{
+                  width,
+                  height,
+                  flex: 1,
+                }}
+                resizeMode="contain"
+              />
+            </ImageZoom>
           ) : (
-            <Camera />
+            <Camera
+              upload={upload}
+              videoSlice={processVideo}
+              sliceSize={sliceSize}
+            />
           )}
         </View>
+
         <View
           style={{
             backgroundColor: '#fff',
@@ -116,6 +154,7 @@ export default class CameraView extends Component {
             elevation: 4,
           }}
         >
+          {type === 'video' && (
           <View
             style={{
               justifyContent: 'center',
@@ -127,47 +166,84 @@ export default class CameraView extends Component {
             <Button
               transparent
               style={{ ...styles.cameraIcon }}
-              onPress={async () => {
-                onImageSelection(null);
+              onPress={() => {
+                this.setState({ upload: !upload });
               }}
             >
               <Icon
                 type="Entypo"
                 name="video-camera"
-                active={!image}
+                active={upload}
                 style={{
                   marginLeft: 0,
                   marginRight: 0,
                   fontSize: 24,
-                  color: image ? 'grey' : 'red',
+                  color: upload ? 'grey' : 'red',
                 }}
               />
             </Button>
-            <Button
-              transparent
-              style={{ ...styles.cameraIcon }}
-              onPress={async () => {
-                const selectedImage = await pickImage();
-                onImageSelection(selectedImage);
+
+          </View>
+          )}
+          {(type === 'both' || type === undefined) ? (
+            <View
+              style={{
+                justifyContent: 'center',
+                alignSelf: 'center',
+                flex: 1,
+                flexDirection: 'row',
               }}
             >
-              <Icon
-                type="Entypo"
-                name="images"
-                active={Boolean(image)}
-                style={{
-                  marginLeft: 0,
-                  marginRight: 0,
-                  fontSize: 24,
-                  color: image ? 'red' : 'grey',
+              <Button
+                transparent
+                disabled={processing}
+                style={{ ...styles.cameraIcon }}
+                onPress={async () => {
+                  onImageSelection(null);
+                  this.setState({ error: false });
                 }}
-              />
-            </Button>
-          </View>
+              >
+                <Icon
+                  type="Entypo"
+                  name="video-camera"
+                  active={!image}
+                  style={{
+                    marginLeft: 0,
+                    marginRight: 0,
+                    fontSize: 24,
+                    color: image ? 'grey' : 'red',
+                  }}
+                />
+              </Button>
+              <Button
+                transparent
+                disabled={processing}
+                style={{ ...styles.cameraIcon }}
+                onPress={async () => {
+                  const selectedImage = await pickImage();
+                  onImageSelection(selectedImage);
+                }}
+              >
+                <Icon
+                  type="Entypo"
+                  name="images"
+                  active={Boolean(image)}
+                  style={{
+                    marginLeft: 0,
+                    marginRight: 0,
+                    fontSize: 24,
+                    color: image ? 'red' : 'grey',
+                  }}
+                />
+              </Button>
+            </View>
+          ) : null}
         </View>
-        <BottomSheet>
-          <Text>Result</Text>
-        </BottomSheet>
+        {!image && type === 'both' ? (
+          <BottomSheet>
+            <Text>Result</Text>
+          </BottomSheet>
+        ) : null}
       </>
     );
   }

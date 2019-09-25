@@ -10,26 +10,36 @@ import AppHeader from '../components/AppHeader';
 import Settings from './SettingsView';
 import About from './AboutView';
 import CameraView from './CameraView';
-import TensorFlow from '../components/TensorFlow';
-import { ObjectDetection } from '../services/OnepanelAPI';
+// import TensorFlow from '../components/TensorFlow';
+import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 
 const getView = (type, that, image) => {
-  TensorFlow();
   switch (type) {
-    case 'Image Pre-Processing':
+    case 'Upload Dataset':
+      return (
+        <CameraView
+          type="video"
+          sliceSize={4}
+          processVideo={(video) => {
+            UploadDataset(video);// , that[`${type.replace(' ', '')}API`])
+          }}
+        />
+      );
     case 'Object Detection':
     case 'Object Classification':
       return (
         <CameraView
+          type="both"
+          srcImage={that.state.srcImage}
           image={image}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`])
+            ObjectDetection(imageToProcess)// , that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {
-                that.setState({ image: responseImage });
+                that.setState({ image: responseImage, srcImage: imageToProcess });
               });
           }}
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage });
+            that.setState({ image: selectedImage, srcImage: null });
           }}
         />
       );

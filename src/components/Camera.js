@@ -15,18 +15,53 @@ export default class Camera extends React.Component {
     this.state = {};
   }
 
+  static getDerivedStateFromProps(props) {
+    return { upload: props.upload };
+  }
+
+  componentDidUpdate(props, state) {
+    const { videoSlice, sliceSize, upload = false } = this.props;
+    if (videoSlice && upload && !state.upload) {
+      this.recordVideoFor(sliceSize);
+    }
+    return { upload };
+  }
+
+  recordVideoFor(secs) {
+    const { videoSlice } = this.props;
+    const { upload } = this.state;
+    this.camera.recordAsync().then((video) => {
+      videoSlice(video);
+      if (upload) { this.recordVideoFor(secs); }
+    });
+    setTimeout(() => {
+      this.camera.stopRecording();
+    }, secs * 1000);
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <RNCamera
+          captureAudio={false}
           ref={(ref) => {
             this.camera = ref;
           }}
           style={styles.preview}
           type={RNCamera.Constants.Type.back}
           flashMode={RNCamera.Constants.FlashMode.on}
-          permissionDialogTitle="Permission to use camera"
-          permissionDialogMessage="We need your permission to use your camera phone"
+          androidCameraPermissionOptions={{
+            title: 'Permission to use camera',
+            message: 'We need your permission to use your camera',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
+          androidRecordAudioPermissionOptions={{
+            title: 'Permission to use audio recording',
+            message: 'We need your permission to use your audio',
+            buttonPositive: 'Ok',
+            buttonNegative: 'Cancel',
+          }}
         />
       </View>
     );

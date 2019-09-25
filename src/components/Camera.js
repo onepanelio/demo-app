@@ -24,17 +24,24 @@ export default class Camera extends React.Component {
     if (videoSlice && upload && !state.upload) {
       this.recordVideoFor(sliceSize);
     }
-    return { upload };
+
+    if (!upload && this.timer !== undefined) {
+      clearTimeout(this.timer);
+      this.camera.stopRecording();
+      this.timer = undefined;
+    }
   }
 
   recordVideoFor(secs) {
     const { videoSlice } = this.props;
-    const { upload } = this.state;
     this.camera.recordAsync().then((video) => {
-      videoSlice(video);
-      if (upload) { this.recordVideoFor(secs); }
+      const { upload } = this.state;
+      if (upload) {
+        videoSlice(video);
+        this.recordVideoFor(secs);
+      }
     });
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.camera.stopRecording();
     }, secs * 1000);
   }

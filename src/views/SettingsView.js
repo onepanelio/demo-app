@@ -125,6 +125,8 @@ export default class Settings extends Component {
       ObjectDetectionHistorySelected: null,
       ObjectClassificationHistory: [],
       ObjectClassificationHistorySelected: null,
+      UploadDatasetHistory: [],
+      UploadDatasetHistorySelected: null,
     };
   }
 
@@ -135,6 +137,9 @@ export default class Settings extends Component {
     });
     this.getHistory('ObjectClassificationHistory').then((selected) => {
       settingsUpdate('ObjectClassificationAPI', selected.url);
+    });
+    this.getHistory('UploadDatasetHistory').then((selected) => {
+      settingsUpdate('UploadDatasetAPI', selected.url);
     });
   }
 
@@ -178,6 +183,8 @@ export default class Settings extends Component {
       ObjectDetectionHistorySelected,
       ObjectClassificationHistory,
       ObjectClassificationHistorySelected,
+      UploadDatasetHistory,
+      UploadDatasetHistorySelected,
     } = this.state;
 
     return (
@@ -196,6 +203,14 @@ export default class Settings extends Component {
           selected={ObjectClassificationHistorySelected}
           onChange={(value) => {
             this.addNewAPI('ObjectClassificationHistory', value);
+          }}
+        />
+        <SettingCard
+          title="Upload Dataset API"
+          history={UploadDatasetHistory}
+          selected={UploadDatasetHistorySelected}
+          onChange={(value) => {
+            this.addNewAPI('UploadDatasetHistory', value);
           }}
         />
       </ScrollView>

@@ -63,7 +63,7 @@ export default class CameraView extends Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { image, srcImage } = props;
+    const { image = state.image, srcImage } = props;
 
     if (state.processing) {
       const errornousResponse = (image === undefined || image.uri.indexOf('text/html') >= 0);
@@ -75,8 +75,7 @@ export default class CameraView extends Component {
     }
     return {
       image,
-      processing: (Boolean(state.image) && Boolean(image))
-      && (state.image !== image && image !== null),
+      processing: (state.image !== image && image !== null),
       error: false
     };
   }
@@ -178,7 +177,7 @@ export default class CameraView extends Component {
                   marginLeft: 0,
                   marginRight: 0,
                   fontSize: 24,
-                  color: upload ? 'grey' : 'red',
+                  color: upload ? 'red' : 'grey',
                 }}
               />
             </Button>

@@ -4,7 +4,7 @@ export const Navigation = [
     description: ''
   },
   {
-    title: 'Image Pre-Processing',
+    title: 'Upload Dataset',
     description: ''
   },
   {

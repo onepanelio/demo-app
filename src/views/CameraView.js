@@ -103,12 +103,27 @@ export default class CameraView extends Component {
   updateTimer() {
     const { upload } = this.state;
     if (upload) {
-      const now = new Date();
-      const hour = now.getHours() - this.start.getHours();
-      const minutes = now.getMinutes() - this.start.getMinutes();
-      const seconds = this.start.getSeconds() % now.getSeconds();
-      const timer = `${hour < 10 ? '0' : ''}${hour}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-      this.setState({ videoTimer: timer }, () => {
+      let { hour, minutes, seconds } = this.timer;
+      if (seconds === 59) {
+        seconds = 0;
+        if (minutes === 59) {
+          minutes = 0;
+          hour += 1;
+        } else {
+          minutes += 1;
+        }
+      } else {
+        seconds += 1;
+      }
+
+      const timerText = `${hour < 10 ? '0' : ''}${hour}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.timer = {
+        hour,
+        minutes,
+        seconds
+      };
+
+      this.setState({ videoTimer: timerText }, () => {
         setTimeout(() => this.updateTimer(), 1000);
       });
     }
@@ -187,17 +202,24 @@ export default class CameraView extends Component {
               transparent
               style={{ flex: 1, grow: 0, justifyContent: upload ? 'flex-end' : 'center' }}
               onPress={() => {
-                Toast.show({
+                if (!upload && this.toast) {
+                  this.toast.hide();
+                }
+                this.toast = Toast.show({
                   text: !upload ? 'Recording started.' : 'Recording stopped.',
                   type: !upload ? 'success' : 'danger',
                   position: 'bottom',
-                  duration: 5000
+                  duration: !upload ? (1000 * 60 * 60 * 1000) : 5000
                 });
                 // eslint-disable-next-line no-shadow
                 this.setState({ upload: !upload }, () => {
                   // eslint-disable-next-line react/destructuring-assignment
                   if (this.state.upload) {
-                    this.start = new Date();
+                    this.timer = {
+                      hour: 0,
+                      minutes: 0,
+                      seconds: 0
+                    };
                     this.updateTimer();
                   }
                 });

@@ -57,11 +57,13 @@ export default function Menu({ onItemSelected, selectedItem }) {
       </View>
       <List>
         {menus.map((menu) => (
-          <ListItem noIndent>
+          <ListItem
+            noIndent
+            onPress={() => onItemSelected(menu.title)}
+          >
             <Left>
               <Text
                 key={menu.title}
-                onPress={() => onItemSelected(menu.title)}
                 style={{
                   ...styles.item,
                   color: selectedItem === menu.title ? '#FB8C00' : 'black',

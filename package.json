@@ -27,6 +27,7 @@
     "redux-starter-kit": "^0.6.3",
     "rn-fetch-blob": "^0.10.16",
     "rn-sliding-up-panel": "2.3.1",
+    "tflite-react-native": "^0.0.5",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

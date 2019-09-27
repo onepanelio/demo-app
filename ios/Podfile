@@ -32,6 +32,8 @@ target 'platform_demo' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
 
+  pod 'TfliteReactNative', :path => '../node_modules/tflite-react-native'
+
   target 'platform_demoTests' do
     inherit! :search_paths
     # Pods for testing

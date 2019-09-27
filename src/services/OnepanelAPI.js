@@ -3,6 +3,8 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 import uuidv4 from 'uuid/v4';
 
+import RNFS from 'react-native-fs';
+
 const config = {
   method: 'POST', // *GET, POST, PUT, DELETE, etc.
   mode: 'cors', // no-cors, *cors, same-origin
@@ -46,6 +48,7 @@ export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/
     data: RNFetchBlob.wrap(video.uri)
   }]).then((res) => {
     console.log(res);
+    RNFS.unlink(video.uri);
   }).catch((error) => {
     console.log(error);
   });

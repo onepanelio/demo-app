@@ -9,12 +9,11 @@ const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 const platform = Platform.OS;
 const platformStyle = undefined;
-const isIphoneX =
-  platform === PLATFORM.IOS &&
-  (deviceHeight === 812 ||
-    deviceWidth === 812 ||
-    deviceHeight === 896 ||
-    deviceWidth === 896);
+const isIphoneX = platform === PLATFORM.IOS
+  && (deviceHeight === 812
+    || deviceWidth === 812
+    || deviceHeight === 896
+    || deviceWidth === 896);
 
 export default {
   platformStyle,
@@ -133,10 +132,10 @@ export default {
   checkboxTextShadowRadius: 0,
 
   // Color
-  brandPrimary: platform === PLATFORM.IOS ? '#007aff' : '#3F51B5',
+  brandPrimary: platform === PLATFORM.IOS ? '#01579B' : '#01579B',
   brandInfo: '#62B1F6',
   brandSuccess: '#5cb85c',
-  brandDanger: '#d9534f',
+  brandDanger: '#FB8C00',
   brandWarning: '#f0ad4e',
   brandDark: '#000',
   brandLight: '#f4f4f4',

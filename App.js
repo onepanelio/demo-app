@@ -17,7 +17,8 @@ import { Provider } from 'react-redux';
 import SideMenu from 'react-native-side-menu';
 import {
   Container,
-  Root
+  Root,
+  StyleProvider
 } from 'native-base';
 import {
   StatusBar, Linking
@@ -27,6 +28,9 @@ import rootReducer from './src/modules/store';
 // Local
 import Main from './src/views/Main';
 import Menu from './src/views/SideMenu';
+
+import getTheme from './native-base-theme/components';
+import material from './native-base-theme/variables/material';
 
 const store = configureStore({
   reducer: rootReducer,
@@ -77,16 +81,18 @@ export default class App extends Component {
     return (
       <Root>
         <Provider store={store}>
-          <Container>
-            <SideMenu
-              menu={menu}
-              isOpen={isOpen}
-              onChange={(changedOpenState) => this.updateMenuState(changedOpenState)}
-            >
-              <StatusBar hidden />
-              <Main toggleSideBar={() => this.toggle()} title={selectedItem} />
-            </SideMenu>
-          </Container>
+          <StyleProvider style={getTheme(material)}>
+            <Container>
+              <SideMenu
+                menu={menu}
+                isOpen={isOpen}
+                onChange={(changedOpenState) => this.updateMenuState(changedOpenState)}
+              >
+                <StatusBar hidden />
+                <Main toggleSideBar={() => this.toggle()} title={selectedItem} />
+              </SideMenu>
+            </Container>
+          </StyleProvider>
         </Provider>
       </Root>
     );

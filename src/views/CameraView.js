@@ -135,6 +135,8 @@ export default class CameraView extends Component {
       processVideo,
       sliceSize,
       type,
+      detectObjectsLive,
+      output
     } = this.props;
     const {
       image, processing, upload, videoTimer
@@ -161,12 +163,26 @@ export default class CameraView extends Component {
               />
             </ImageZoom>
           ) : (
-            <Camera
-              upload={upload}
-              videoSlice={processVideo}
-              sliceSize={sliceSize}
-              close={() => this.setState({ upload: false })}
-            />
+            <>
+              <Camera
+                upload={upload}
+                videoSlice={processVideo}
+                sliceSize={sliceSize}
+                capturedImage={detectObjectsLive}
+                close={() => this.setState({ upload: false })}
+              />
+              <View style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                top: 0,
+              }}
+              >
+                {!image && output ? output.view : null}
+
+              </View>
+            </>
           )}
         </View>
 

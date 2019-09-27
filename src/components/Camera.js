@@ -21,10 +21,13 @@ export default class Camera extends React.Component {
 
   componentDidUpdate(props, state) {
     const {
-      videoSlice, sliceSize, upload = false, close = () => {}
+      videoSlice = false,
+      sliceSize, upload = false, close = () => {}
     } = this.props;
     if (videoSlice && upload && !state.upload) {
       this.recordVideoFor(sliceSize);
+    } else if (this.camera && !videoSlice) {
+      this.startLiveInferenceImageShot();
     }
 
     if (!upload && this.timer !== undefined) {
@@ -35,6 +38,26 @@ export default class Camera extends React.Component {
         close();
       }
       this.timer = undefined;
+    }
+  }
+
+  startLiveInferenceImageShot() {
+    const { capturedImage, sensitivity = 500 } = this.props;
+    if (capturedImage) {
+      this.camera.takePictureAsync({
+        quality: 1,
+        doNotSave: true
+      }).then((image) => {
+        capturedImage(image);
+      }).catch((err) => {
+        console.log(err);
+      });
+
+      this.liveInferenceTimer = setTimeout(() => {
+        if (this.camera) {
+          this.startLiveInferenceImageShot();
+        }
+      }, sensitivity);
     }
   }
 
@@ -71,7 +94,7 @@ export default class Camera extends React.Component {
           }}
           style={styles.preview}
           type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.on}
+          flashMode={RNCamera.Constants.FlashMode.off}
           androidCameraPermissionOptions={{
             title: 'Permission to use camera',
             message: 'We need your permission to use your camera',

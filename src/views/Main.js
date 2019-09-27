@@ -12,6 +12,8 @@ import About from './AboutView';
 import CameraView from './CameraView';
 import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 
+import { process as ObjectDetectionLive } from '../modules/detection/ObjectDetection';
+
 let videoCache = [];
 const processVideo = (video, cache = true) => {
   if (cache) {
@@ -46,6 +48,14 @@ const getView = (type, that, image) => {
           type="both"
           srcImage={that.state.srcImage}
           image={image}
+          output={that.state.output}
+          detectObjectsLive={(frame) => {
+            if (!image) {
+              ObjectDetectionLive(frame).then((output) => {
+                that.setState({ output });
+              });
+            }
+          }}
           processImage={(imageToProcess) => {
             ObjectDetection(imageToProcess)// , that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {

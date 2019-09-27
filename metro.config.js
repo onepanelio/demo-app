@@ -7,7 +7,7 @@
 
 module.exports = {
   resolver: {
-    assetExts: ['pb', 'txt', 'jpg', 'png', 'json']
+    assetExts: ['pb', 'txt', 'jpg', 'png', 'json', 'tflite', 'txt']
   },
   transformer: {
     getTransformOptions: async () => ({

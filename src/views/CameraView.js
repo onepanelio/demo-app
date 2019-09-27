@@ -96,6 +96,24 @@ export default class CameraView extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this.setState({ upload: false });
+  }
+
+  updateTimer() {
+    const { upload } = this.state;
+    if (upload) {
+      const now = new Date();
+      const hour = now.getHours() - this.start.getHours();
+      const minutes = now.getMinutes() - this.start.getMinutes();
+      const seconds = this.start.getSeconds() % now.getSeconds();
+      const timer = `${hour < 10 ? '0' : ''}${hour}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      this.setState({ videoTimer: timer }, () => {
+        setTimeout(() => this.updateTimer(), 1000);
+      });
+    }
+  }
+
   render() {
     const {
       onImageSelection = () => {},
@@ -103,12 +121,14 @@ export default class CameraView extends Component {
       sliceSize,
       type,
     } = this.props;
-    const { image, processing, upload } = this.state;
+    const {
+      image, processing, upload, videoTimer
+    } = this.state;
     return (
       <>
         {processing ? <Loader loading={processing} /> : null}
         <View style={{ width: '100%', height: '100%' }}>
-          {image ? (
+          {image && type !== 'video' ? (
             <ImageZoom
               cropWidth={width}
               cropHeight={height}
@@ -130,6 +150,7 @@ export default class CameraView extends Component {
               upload={upload}
               videoSlice={processVideo}
               sliceSize={sliceSize}
+              close={() => this.setState({ upload: false })}
             />
           )}
         </View>
@@ -156,17 +177,30 @@ export default class CameraView extends Component {
           {type === 'video' && (
           <View
             style={{
-              justifyContent: 'center',
-              alignSelf: 'center',
               flex: 1,
+              justifyContent: 'center',
               flexDirection: 'row',
+              alignItems: 'center',
             }}
           >
             <Button
               transparent
-              style={{ ...styles.cameraIcon }}
+              style={{ flex: 1, grow: 0, justifyContent: upload ? 'flex-end' : 'center' }}
               onPress={() => {
-                this.setState({ upload: !upload });
+                Toast.show({
+                  text: !upload ? 'Recording started.' : 'Recording stopped.',
+                  type: !upload ? 'success' : 'danger',
+                  position: 'bottom',
+                  duration: 5000
+                });
+                // eslint-disable-next-line no-shadow
+                this.setState({ upload: !upload }, () => {
+                  // eslint-disable-next-line react/destructuring-assignment
+                  if (this.state.upload) {
+                    this.start = new Date();
+                    this.updateTimer();
+                  }
+                });
               }}
             >
               <Icon
@@ -177,11 +211,11 @@ export default class CameraView extends Component {
                   marginLeft: 0,
                   marginRight: 0,
                   fontSize: 24,
-                  color: upload ? 'red' : 'grey',
+                  color: upload ? '#FB8C00' : '#E0E0E0',
                 }}
               />
+              {upload ? (<Text>{videoTimer}</Text>) : null}
             </Button>
-
           </View>
           )}
           {(type === 'both' || type === undefined) ? (
@@ -191,6 +225,7 @@ export default class CameraView extends Component {
                 alignSelf: 'center',
                 flex: 1,
                 flexDirection: 'row',
+
               }}
             >
               <Button
@@ -210,7 +245,7 @@ export default class CameraView extends Component {
                     marginLeft: 0,
                     marginRight: 0,
                     fontSize: 24,
-                    color: image ? 'grey' : 'red',
+                    color: image ? '#E0E0E0' : '#FB8C00',
                   }}
                 />
               </Button>
@@ -231,7 +266,7 @@ export default class CameraView extends Component {
                     marginLeft: 0,
                     marginRight: 0,
                     fontSize: 24,
-                    color: image ? 'red' : 'grey',
+                    color: image ? '#FB8C00' : '#E0E0E0'
                   }}
                 />
               </Button>

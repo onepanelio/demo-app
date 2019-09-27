@@ -10,9 +10,25 @@ import AppHeader from '../components/AppHeader';
 import Settings from './SettingsView';
 import About from './AboutView';
 import CameraView from './CameraView';
-// import TensorFlow from '../components/TensorFlow';
 import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 
+let videoCache = [];
+const processVideo = (video, cache = true) => {
+  if (cache) {
+    videoCache.push(video);
+  }
+  if (videoCache.length > 0) {
+    const nextVideo = videoCache.pop();
+    if (nextVideo) {
+      UploadDataset(nextVideo)// , that[`${type.replace(' ', '')}API`])
+        .then(() => {
+          processVideo(null, false);
+        }).catch(() => {
+          videoCache = [];
+        });
+    }
+  }
+};
 const getView = (type, that, image) => {
   switch (type) {
     case 'Upload Dataset':
@@ -20,9 +36,7 @@ const getView = (type, that, image) => {
         <CameraView
           type="video"
           sliceSize={4}
-          processVideo={(video) => {
-            UploadDataset(video);// , that[`${type.replace(' ', '')}API`])
-          }}
+          processVideo={processVideo}
         />
       );
     case 'Object Detection':

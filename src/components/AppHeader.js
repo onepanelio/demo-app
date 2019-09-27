@@ -7,7 +7,7 @@ import {
 export default (props) => {
   const { title = 'Home' } = props;
   return (
-    <Header>
+    <Header style={{ backgroundColor: '#01579B' }}>
       <Left>
         <Button transparent onPress={() => props.openDrawer()}>
           <Icon name="menu" />

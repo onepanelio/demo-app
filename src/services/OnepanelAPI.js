@@ -17,6 +17,7 @@ const config = {
   redirect: 'follow', // manual, *follow, error
   referrer: 'no-referrer', // no-referrer, *client
 };
+
 export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-demo/projects/app-api/workspaces/app-api-v1/api/upload') => {
   const { fileName } = image;
 
@@ -33,7 +34,7 @@ export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-dem
     });
 };
 
-export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/dataset-upload-api/upload/') => {
+export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/dataset-upload-api/api/upload/') => {
   const fileName = `${uuidv4()}-${Date.now()}.mp4`;
 
   return RNFetchBlob.fetch('POST', api, {

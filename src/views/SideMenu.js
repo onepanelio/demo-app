@@ -6,10 +6,13 @@ import {
   ScrollView,
   View,
   Image,
-  Text,
 } from 'react-native';
 
-import { List, ListItem, Left } from 'native-base';
+import {
+  Text,
+  List, ListItem, Left
+} from 'native-base';
+
 
 import OnePanelHeading from '../assets/onepanel.png';
 import { Navigation as menus } from '../../app.config';
@@ -61,7 +64,7 @@ export default function Menu({ onItemSelected, selectedItem }) {
                 onPress={() => onItemSelected(menu.title)}
                 style={{
                   ...styles.item,
-                  color: selectedItem === menu.title ? 'blue' : 'black',
+                  color: selectedItem === menu.title ? '#FB8C00' : 'black',
                 }}
               >
                 {menu.title}

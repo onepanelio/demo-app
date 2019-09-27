@@ -20,29 +20,44 @@ export default class Camera extends React.Component {
   }
 
   componentDidUpdate(props, state) {
-    const { videoSlice, sliceSize, upload = false } = this.props;
+    const {
+      videoSlice, sliceSize, upload = false, close = () => {}
+    } = this.props;
     if (videoSlice && upload && !state.upload) {
       this.recordVideoFor(sliceSize);
     }
 
     if (!upload && this.timer !== undefined) {
       clearTimeout(this.timer);
-      this.camera.stopRecording();
+      if (this.camera) {
+        this.camera.stopRecording();
+      } else {
+        close();
+      }
       this.timer = undefined;
     }
   }
 
   recordVideoFor(secs) {
-    const { videoSlice } = this.props;
-    this.camera.recordAsync().then((video) => {
+    const { videoSlice, close = () => {} } = this.props;
+    this.camera.recordAsync({
+      quality: RNCamera.Constants.VideoQuality['480p']
+    }).then((video) => {
       const { upload } = this.state;
       if (upload) {
         videoSlice(video);
         this.recordVideoFor(secs);
       }
+    }).catch((err) => {
+      console.log(err);
+      close();
     });
     this.timer = setTimeout(() => {
-      this.camera.stopRecording();
+      if (this.camera) {
+        this.camera.stopRecording();
+      } else {
+        close();
+      }
     }, secs * 1000);
   }
 

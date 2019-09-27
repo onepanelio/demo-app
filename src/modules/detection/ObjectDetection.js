@@ -4,6 +4,8 @@ import {
 } from 'react-native';
 import Tflite from 'tflite-react-native';
 
+import RNFS from 'react-native-fs';
+
 
 const tflite = new Tflite();
 let isModelSelected = false;
@@ -124,6 +126,7 @@ export const process = async (image) => {
 
   loadModel();
   const res = await onImageSelection(image.uri);
+  RNFS.unlink(image.uri);
   return { view: renderResults(res.recognitions, image.height, image.width), timeStamp };
 };
 

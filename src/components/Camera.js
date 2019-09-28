@@ -42,7 +42,7 @@ export default class Camera extends React.Component {
   }
 
   startLiveInferenceImageShot() {
-    const { capturedImage, sensitivity = 250 } = this.props;
+    const { capturedImage, sensitivity = 1000 } = this.props;
     if (capturedImage) {
       this.camera.takePictureAsync({
         quality: 0.8

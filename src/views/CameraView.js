@@ -145,7 +145,9 @@ export default class CameraView extends Component {
     this.imageMode = Boolean(image);
     return (
       <>
-        {processing ? <Loader message="Processing..." /> : null}
+        {processing
+          || (!image && !this.imageMode && output && output.view && output.view.length === 0)
+          ? <Loader message="Processing..." /> : null}
         <View style={{
           width: '100%', height: '100%', position: 'absolute', top: 0
         }}

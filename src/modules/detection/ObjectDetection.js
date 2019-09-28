@@ -1,11 +1,17 @@
+/* eslint-disable no-unused-vars */
 import React from 'react';
 import {
-  Image, Text, View, StyleSheet
+  Image, Text, View, StyleSheet,
+  Dimensions, PixelRatio
 } from 'react-native';
 import Tflite from 'tflite-react-native';
 
 import RNFS from 'react-native-fs';
 
+const dimension = Dimensions.get('window');
+const sheightInPx = PixelRatio.getPixelSizeForLayoutSize(dimension.height);
+const swidthInPx = PixelRatio.getPixelSizeForLayoutSize(dimension.width);
+const density = PixelRatio.get();
 
 const tflite = new Tflite();
 let isModelSelected = false;
@@ -127,12 +133,16 @@ export const process = async (image) => {
   loadModel();
   const res = await onImageSelection(image.uri);
   RNFS.unlink(image.uri);
-  return { view: renderResults(res.recognitions, image.height, image.width), timeStamp };
+  return {
+    view: renderResults(res.recognitions,
+      image.width / density, image.height / density, image.deviceOrientation),
+    timeStamp
+  };
 };
 
-function renderResults(recognitions, imageWidth, imageHeight, model = yolo) {
-  const w = imageHeight * (350 / imageWidth);
-  const h = 350;
+function renderResults(recognitions, imageWidth, imageHeight, orientation, model = yolo) {
+  const h = dimension.height - 56;
+  const w = dimension.width;
   switch (model) {
     case ssd:
     case yolo:

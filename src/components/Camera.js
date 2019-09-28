@@ -45,7 +45,10 @@ export default class Camera extends React.Component {
     const { capturedImage, sensitivity = 1000 } = this.props;
     if (capturedImage) {
       this.camera.takePictureAsync({
-        quality: 0.8
+        quality: 0.8,
+        fixOrientation: true,
+        orientation: 'portrait',
+        forceUpOrientation: true
       }).then((image) => {
         capturedImage(image);
       }).catch((err) => {

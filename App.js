@@ -21,7 +21,7 @@ import {
   StyleProvider
 } from 'native-base';
 import {
-  StatusBar, Linking
+  StatusBar, Linking, Dimensions
 } from 'react-native';
 import rootReducer from './src/modules/store';
 
@@ -36,6 +36,7 @@ const store = configureStore({
   reducer: rootReducer,
 });
 
+const { width } = Dimensions.get('window');
 export default class App extends Component {
   constructor(props) {
     super(props);
@@ -86,6 +87,7 @@ export default class App extends Component {
               <SideMenu
                 menu={menu}
                 isOpen={isOpen}
+                edgeHitWidth={width}
                 onChange={(changedOpenState) => this.updateMenuState(changedOpenState)}
               >
                 <StatusBar hidden />

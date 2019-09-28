@@ -90,7 +90,7 @@ export default class CameraView extends Component {
       Toast.show({
         text: 'Oops, Its looks like API is down',
         type: 'danger',
-        position: 'bottom',
+        position: 'top',
         duration: 5000
       });
     }
@@ -141,10 +141,15 @@ export default class CameraView extends Component {
     const {
       image, processing, upload, videoTimer
     } = this.state;
+
+    this.imageMode = Boolean(image);
     return (
       <>
-        {processing ? <Loader loading={processing} /> : null}
-        <View style={{ width: '100%', height: '100%' }}>
+        {processing ? <Loader message="Processing..." /> : null}
+        <View style={{
+          width: '100%', height: '100%', position: 'absolute', top: 0
+        }}
+        >
           {image && type !== 'video' ? (
             <ImageZoom
               cropWidth={width}
@@ -162,8 +167,15 @@ export default class CameraView extends Component {
                 resizeMode="contain"
               />
             </ImageZoom>
-          ) : (
-            <>
+          ) : (!this.imageMode
+            && (
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+              pointerEvents="none"
+            >
               <Camera
                 upload={upload}
                 videoSlice={processVideo}
@@ -179,13 +191,13 @@ export default class CameraView extends Component {
                 top: 0,
               }}
               >
-                {!image && output ? output.view : null}
+                {!image && output && !this.imageMode ? output.view : null}
 
               </View>
-            </>
+            </View>
+            )
           )}
         </View>
-
         <View
           style={{
             backgroundColor: '#fff',
@@ -193,7 +205,7 @@ export default class CameraView extends Component {
             flexDirection: 'row',
             position: 'absolute',
             borderRadius: 20,
-            top: 8,
+            bottom: 16,
             left: width / 2 - 50,
             right: 0,
             width: 120,
@@ -203,6 +215,7 @@ export default class CameraView extends Component {
             shadowOpacity: 0.8,
             shadowRadius: 2,
             elevation: 4,
+            zIndex: 999
           }}
         >
           {type === 'video' && (
@@ -224,8 +237,8 @@ export default class CameraView extends Component {
                 this.toast = Toast.show({
                   text: !upload ? 'Recording started.' : 'Recording stopped.',
                   type: !upload ? 'success' : 'danger',
-                  position: 'bottom',
-                  duration: !upload ? (1000 * 60 * 60 * 1000) : 5000
+                  position: 'top',
+                  duration: !upload ? (1000 * 60 * 60 * 1000) : 3000
                 });
                 // eslint-disable-next-line no-shadow
                 this.setState({ upload: !upload }, () => {
@@ -292,8 +305,13 @@ export default class CameraView extends Component {
                 disabled={processing}
                 style={{ ...styles.cameraIcon }}
                 onPress={async () => {
-                  const selectedImage = await pickImage();
-                  onImageSelection(selectedImage);
+                  pickImage().then((selectedImage) => {
+                    this.imageMode = true;
+                    onImageSelection(selectedImage);
+                  }).catch(() => {
+                    this.imageMode = false;
+                    onImageSelection(null);
+                  });
                 }}
               >
                 <Icon
@@ -311,7 +329,7 @@ export default class CameraView extends Component {
             </View>
           ) : null}
         </View>
-        {!image && type === 'both' ? (
+        {!image && type === 'none' ? (
           <BottomSheet>
             <Text>Result</Text>
           </BottomSheet>

@@ -5,7 +5,7 @@ import {
   View
 } from 'native-base';
 
-export default ({ loading }) => (
+export default ({ message }) => (
   <View
     style={{
       flex: 1,
@@ -17,7 +17,7 @@ export default ({ loading }) => (
   >
     <Spinner color="blue" />
     <Text style={{ color: 'white' }}>
-      {`Finding ${loading ? '...' : 'Done'}`}
+      {message}
     </Text>
   </View>
 );

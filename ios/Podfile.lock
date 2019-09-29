@@ -56,13 +56,13 @@ PODS:
     - React-cxxreact (= 0.60.5)
     - React-jsi (= 0.60.5)
   - React-jsinspector (0.60.5)
-  - react-native-camera (3.3.0):
+  - react-native-camera (3.6.0):
     - React
-    - react-native-camera/RCT (= 3.3.0)
-    - react-native-camera/RN (= 3.3.0)
-  - react-native-camera/RCT (3.3.0):
+    - react-native-camera/RCT (= 3.6.0)
+    - react-native-camera/RN (= 3.6.0)
+  - react-native-camera/RCT (3.6.0):
     - React
-  - react-native-camera/RN (3.3.0):
+  - react-native-camera/RN (3.6.0):
     - React
   - react-native-image-picker (1.1.0):
     - React
@@ -199,8 +199,8 @@ SPEC CHECKSUMS:
   React-jsi: 4d8c9efb6312a9725b18d6fc818ffc103f60fec2
   React-jsiexecutor: 90ad2f9db09513fc763bc757fdc3c4ff8bde2a30
   React-jsinspector: e08662d1bf5b129a3d556eb9ea343a3f40353ae4
-  react-native-camera: a6c0ca5653cbcd9ea1c1894966207346cfeebe09
-  react-native-image-picker: 7a85cf7b0a53845f03ae52fb4592a2748ded069b
+  react-native-camera: 4f614d2da6526be735ecbe658c3f57eebfb0686a
+  react-native-image-picker: 3637d63fef7e32a230141ab4660d3ceb773c824f
   React-RCTActionSheet: b0f1ea83f4bf75fb966eae9bfc47b78c8d3efd90
   React-RCTAnimation: 359ba1b5690b1e87cc173558a78e82d35919333e
   React-RCTBlob: 5e2b55f76e9a1c7ae52b826923502ddc3238df24
@@ -217,6 +217,6 @@ SPEC CHECKSUMS:
   TfliteReactNative: 57b925d87235478b7231e34dc96032286a67eada
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: c58059c6241f98804e83b71906f2e6f9601f0533
+PODFILE CHECKSUM: ebc2d3dc46d6820f6faae6d38043e0859d46e90b
 
 COCOAPODS: 1.8.1

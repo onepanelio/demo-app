@@ -1,3 +1,5 @@
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import {
@@ -35,7 +37,7 @@ export const MODEL_NAMES = {
 };
 
 export const loadModel = (model = yolo) => {
-  if (!isModelSelected) {
+  if (!isModelSelected || model !== modelLoaded) {
     loadingModel = true;
     onSelectModel(model).then((res) => {
       loadingModel = false;
@@ -54,7 +56,7 @@ const onImageSelection = (path, model = modelLoaded) => new Promise((resolve, re
         numResultsPerClass: 1,
       },
       (err, res) => {
-        if (err) { console.log(err); reject(err); } else { this.resolve({ recognitions: res }); }
+        if (err) { console.log(err); reject(err); } else { resolve({ recognitions: res }); }
       });
       break;
 
@@ -157,25 +159,26 @@ function renderResults(recognitions, imageWidth, imageHeight, orientation, model
   switch (model) {
     case ssd:
     case yolo:
-      return recognitions.map((res, id) => {
-        const left = res.rect.x * w;
-        const top = res.rect.y * h;
-        const width = res.rect.w * w;
-        const height = res.rect.h * h;
-        return (
-          <View
+      return recognitions
+        .filter((res) => (res.confidenceInClass * 100).toFixed(0) >= 50).map((res, id) => {
+          const left = res.rect.x * w;
+          const top = res.rect.y * h;
+          const width = res.rect.w * w;
+          const height = res.rect.h * h;
+          return (
+            <View
             // eslint-disable-next-line react/no-array-index-key
-            key={id}
-            style={[styles.box, {
-              top, left, width, height
-            }]}
-          >
-            <Text style={{ color: 'white', backgroundColor: blue }}>
-              {`${res.detectedClass} ${(res.confidenceInClass * 100).toFixed(0)}%`}
-            </Text>
-          </View>
-        );
-      });
+              key={id}
+              style={[styles.box, {
+                top, left, width, height
+              }]}
+            >
+              <Text style={{ color: 'white', backgroundColor: blue }}>
+                {`${res.detectedClass} ${(res.confidenceInClass * 100).toFixed(0)}%`}
+              </Text>
+            </View>
+          );
+        });
     case deeplab:
       return (
         recognitions.length > 0
@@ -211,10 +214,31 @@ function renderResults(recognitions, imageWidth, imageHeight, orientation, model
 
     default:
       return recognitions.map((res, id) => (
-        // eslint-disable-next-line react/no-array-index-key
-        <Text key={id} style={{ color: 'black' }}>
-          {`${res.label}-${(res.confidence * 100).toFixed(0)}%`}
-        </Text>
+        <View
+            // eslint-disable-next-line react/no-array-index-key
+          key={id}
+          style={{
+            position: 'absolute',
+            top: (8) + (id * 56),
+            left: (dimension.width / 2) - 100,
+            width: 200,
+            height: 40,
+            padding: 8,
+            margin: 8,
+            backgroundColor: `rgba(52, 52, 52, ${res.confidence})`,
+          }}
+        >
+          <Text
+            key={id}
+            style={{
+              color: `rgba(255, 255, 255, ${0.5 + (0.5 * res.confidence)})`,
+              textAlign: 'center',
+              fontSize: 16
+            }}
+          >
+            {`${res.label} ${(res.confidence * 100).toFixed(0)}%`}
+          </Text>
+        </View>
       ));
   }
 }

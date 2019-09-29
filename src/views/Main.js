@@ -5,6 +5,10 @@ import {
   Text,
 } from 'native-base';
 
+import {
+  AppState
+} from 'react-native';
+
 import AppHeader from '../components/AppHeader';
 
 import Settings from './SettingsView';
@@ -42,22 +46,49 @@ const getView = (type, that, image) => {
         />
       );
     case 'Object Detection':
-    case 'Object Classification':
       return (
         <CameraView
+          key={type}
           type="both"
           srcImage={that.state.srcImage}
           image={image}
           output={that.state.output}
           detectObjectsLive={(frame) => {
             if (!image) {
-              ObjectDetectionLive(frame).then((output) => {
+              ObjectDetectionLive(frame, MODEL_NAMES.ssd).then((output) => {
                 that.setState({ output });
               });
             }
           }}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess, MODEL_NAMES.yolo)
+            ObjectDetection(imageToProcess)
+            // , that[`${type.replace(' ', '')}API`])
+              .then((responseImage) => {
+                that.setState({ image: responseImage, srcImage: imageToProcess });
+              });
+          }}
+          onImageSelection={(selectedImage) => {
+            that.setState({ image: selectedImage, srcImage: null });
+          }}
+        />
+      );
+    case 'Object Classification':
+      return (
+        <CameraView
+          key={type}
+          type="both"
+          srcImage={that.state.srcImage}
+          image={image}
+          output={that.state.output}
+          detectObjectsLive={(frame) => {
+            if (!image) {
+              ObjectDetectionLive(frame, MODEL_NAMES.mobile).then((output) => {
+                that.setState({ output });
+              });
+            }
+          }}
+          processImage={(imageToProcess) => {
+            ObjectDetection(imageToProcess)
             // , that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {
                 that.setState({ image: responseImage, srcImage: imageToProcess });
@@ -96,13 +127,35 @@ Screen
 export default class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = { image: null };
+    this.state = { image: null, appState: AppState.currentState };
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    // eslint-disable-next-line react/destructuring-assignment
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      // nothing
+    }
+    this.setState({ appState: nextAppState });
   }
 
   render() {
     const { toggleSideBar, title } = this.props;
-    const { image } = this.state;
+    const { image, appState } = this.state;
+
+    if (appState !== 'active') {
+      return null;
+    }
+
     const view = getView(title, this, image);
+
     return (
       <Container>
         <AppHeader openDrawer={toggleSideBar} title={title} />
@@ -110,7 +163,7 @@ export default class Main extends Component {
           padder={title === 'Home' || title === 'About' || title === 'Settings'}
           contentContainerStyle={{ flexGrow: 1, position: 'relative' }}
         >
-          {view}
+          {appState === 'active' ? view : null}
         </Content>
       </Container>
     );

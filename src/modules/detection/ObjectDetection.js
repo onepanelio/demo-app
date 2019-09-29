@@ -22,18 +22,25 @@ const yolo = 'Tiny YOLOv2';
 const deeplab = 'Deeplab';
 const posenet = 'PoseNet';
 let loadingModel = false;
+
+let modelLoaded = null;
+
+export const MODEL_NAMES = {
+  ssd, yolo, deeplab, posenet, loadingModel
+};
+
 export const loadModel = (model = yolo) => {
   if (!isModelSelected) {
     loadingModel = true;
     onSelectModel(model).then((res) => {
-      console.log(res);
       loadingModel = false;
+      modelLoaded = model;
       isModelSelected = true;
     });
   }
 };
 
-const onImageSelection = (path, model = yolo) => new Promise((resolve, reject) => {
+const onImageSelection = (path, model = modelLoaded) => new Promise((resolve, reject) => {
   switch (model) {
     case ssd:
       tflite.detectObjectOnImage({
@@ -126,11 +133,11 @@ const onSelectModel = (model) => new Promise((resolve, reject) => {
   });
 });
 
-export const process = async (image) => {
+export const process = async (image, model = yolo) => {
   const timeStamp = Date.now();
   if (loadingModel) return { view: null, timeStamp };
 
-  loadModel();
+  loadModel(model);
   const res = await onImageSelection(image.uri);
   RNFS.unlink(image.uri);
   return {
@@ -140,7 +147,7 @@ export const process = async (image) => {
   };
 };
 
-function renderResults(recognitions, imageWidth, imageHeight, orientation, model = yolo) {
+function renderResults(recognitions, imageWidth, imageHeight, orientation, model = modelLoaded) {
   const h = dimension.height - 56;
   const w = dimension.width;
   switch (model) {

@@ -28,11 +28,9 @@ target 'platform_demo' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
 
-  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
 
-  pod 'TfliteReactNative', :path => '../node_modules/tflite-react-native'
+  pod 'TensorFlowLite', '1.12.0'
 
   target 'platform_demoTests' do
     inherit! :search_paths

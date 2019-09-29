@@ -140,9 +140,8 @@ const onSelectModel = (model) => new Promise((resolve, reject) => {
 
 export const process = async (image, model = yolo) => {
   const timeStamp = Date.now();
-  if (loadingModel) return { view: null, timeStamp };
-
   loadModel(model);
+  if (loadingModel || modelLoaded === null) return { view: null, timeStamp };
   const res = await onImageSelection(image.uri);
   RNFS.unlink(image.uri);
   return {

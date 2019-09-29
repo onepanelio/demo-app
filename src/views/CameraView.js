@@ -145,17 +145,18 @@ export default class CameraView extends Component {
     this.imageMode = Boolean(image);
     return (
       <>
-        {processing ? <Loader message="Processing..." /> : null}
-        <View style={{
-          width: '100%', height: '100%', position: 'absolute', top: 0
-        }}
-        >
+
+        {processing
+          || (!image && !this.imageMode && output && output.view && output.view.length === 0)
+          ? <Loader message="Processing..." /> : null}
+
+        <View style={{ width: '100%', height: '100%', position: 'relative' }}>
           {image && type !== 'video' ? (
             <ImageZoom
               cropWidth={width}
-              cropHeight={height}
+              cropHeight={height - 56}
               imageWidth={width}
-              imageHeight={height}
+              imageHeight={width * (height / width)}
             >
               <Image
                 source={image}
@@ -183,151 +184,142 @@ export default class CameraView extends Component {
                 capturedImage={detectObjectsLive}
                 close={() => this.setState({ upload: false })}
               />
-              <View style={{
-                position: 'absolute',
-                left: 0,
-                right: 0,
-                bottom: 0,
-                top: 0,
-              }}
-              >
                 {!image && output && !this.imageMode ? output.view : null}
 
-              </View>
             </View>
             )
           )}
-        </View>
-        <View
-          style={{
-            backgroundColor: '#fff',
-            flex: 1,
-            flexDirection: 'row',
-            position: 'absolute',
-            borderRadius: 20,
-            bottom: 16,
-            left: width / 2 - 50,
-            right: 0,
-            width: 120,
-            height: 48,
-            shadowColor: '#000',
-            shadowOffset: { width: 4, height: 4 },
-            shadowOpacity: 0.8,
-            shadowRadius: 2,
-            elevation: 4,
-            zIndex: 999
-          }}
-        >
-          {type === 'video' && (
           <View
             style={{
+              backgroundColor: '#fff',
               flex: 1,
-              justifyContent: 'center',
               flexDirection: 'row',
-              alignItems: 'center',
+              position: 'absolute',
+              borderRadius: 20,
+              bottom: 32,
+              left: width / 2 - 50,
+              right: 0,
+              width: 120,
+              height: 48,
+              shadowColor: '#000',
+              shadowOffset: { width: 4, height: 4 },
+              shadowOpacity: 0.8,
+              shadowRadius: 2,
+              elevation: 4,
+              zIndex: 999
             }}
           >
-            <Button
-              transparent
-              style={{ flex: 1, grow: 0, justifyContent: upload ? 'flex-end' : 'center' }}
-              onPress={() => {
-                if (!upload && this.toast) {
-                  this.toast.hide();
-                }
-                this.toast = Toast.show({
-                  text: !upload ? 'Recording started.' : 'Recording stopped.',
-                  type: !upload ? 'success' : 'danger',
-                  position: 'top',
-                  duration: !upload ? (1000 * 60 * 60 * 1000) : 3000
-                });
-                // eslint-disable-next-line no-shadow
-                this.setState({ upload: !upload }, () => {
-                  // eslint-disable-next-line react/destructuring-assignment
-                  if (this.state.upload) {
-                    this.timer = {
-                      hour: 0,
-                      minutes: 0,
-                      seconds: 0
-                    };
-                    this.updateTimer();
-                  }
-                });
-              }}
-            >
-              <Icon
-                type="Entypo"
-                name="video-camera"
-                active={upload}
-                style={{
-                  marginLeft: 0,
-                  marginRight: 0,
-                  fontSize: 24,
-                  color: upload ? '#FB8C00' : '#E0E0E0',
-                }}
-              />
-              {upload ? (<Text>{videoTimer}</Text>) : null}
-            </Button>
-          </View>
-          )}
-          {(type === 'both' || type === undefined) ? (
+            {type === 'video' && (
             <View
               style={{
-                justifyContent: 'center',
-                alignSelf: 'center',
                 flex: 1,
+                justifyContent: 'center',
                 flexDirection: 'row',
-
+                alignItems: 'center',
               }}
             >
               <Button
                 transparent
-                disabled={processing}
-                style={{ ...styles.cameraIcon }}
-                onPress={async () => {
-                  onImageSelection(null);
-                  this.setState({ error: false });
-                }}
-              >
-                <Icon
-                  type="Entypo"
-                  name="video-camera"
-                  active={!image}
-                  style={{
-                    marginLeft: 0,
-                    marginRight: 0,
-                    fontSize: 24,
-                    color: image ? '#E0E0E0' : '#FB8C00',
-                  }}
-                />
-              </Button>
-              <Button
-                transparent
-                disabled={processing}
-                style={{ ...styles.cameraIcon }}
-                onPress={async () => {
-                  pickImage().then((selectedImage) => {
-                    this.imageMode = true;
-                    onImageSelection(selectedImage);
-                  }).catch(() => {
-                    this.imageMode = false;
-                    onImageSelection(null);
+                style={{ flex: 1, grow: 0, justifyContent: upload ? 'flex-end' : 'center' }}
+                onPress={() => {
+                  if (!upload && this.toast) {
+                    this.toast.hide();
+                  }
+                  this.toast = Toast.show({
+                    text: !upload ? 'Recording started.' : 'Recording stopped.',
+                    type: !upload ? 'success' : 'danger',
+                    position: 'top',
+                    duration: !upload ? (1000 * 60 * 60 * 1000) : 3000
+                  });
+                  // eslint-disable-next-line no-shadow
+                  this.setState({ upload: !upload }, () => {
+                  // eslint-disable-next-line react/destructuring-assignment
+                    if (this.state.upload) {
+                      this.timer = {
+                        hour: 0,
+                        minutes: 0,
+                        seconds: 0
+                      };
+                      this.updateTimer();
+                    }
                   });
                 }}
               >
                 <Icon
                   type="Entypo"
-                  name="images"
-                  active={Boolean(image)}
+                  name="video-camera"
+                  active={upload}
                   style={{
                     marginLeft: 0,
                     marginRight: 0,
                     fontSize: 24,
-                    color: image ? '#FB8C00' : '#E0E0E0'
+                    color: upload ? '#FB8C00' : '#E0E0E0',
                   }}
                 />
+                {upload ? (<Text>{videoTimer}</Text>) : null}
               </Button>
             </View>
-          ) : null}
+            )}
+            {(type === 'both' || type === undefined) ? (
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                  flex: 1,
+                  flexDirection: 'row',
+
+                }}
+              >
+                <Button
+                  transparent
+                  disabled={processing}
+                  style={{ ...styles.cameraIcon }}
+                  onPress={async () => {
+                    onImageSelection(null);
+                    this.setState({ error: false });
+                  }}
+                >
+                  <Icon
+                    type="Entypo"
+                    name="video-camera"
+                    active={!image}
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      fontSize: 24,
+                      color: image ? '#E0E0E0' : '#FB8C00',
+                    }}
+                  />
+                </Button>
+                <Button
+                  transparent
+                  disabled={processing}
+                  style={{ ...styles.cameraIcon }}
+                  onPress={async () => {
+                    pickImage().then((selectedImage) => {
+                      this.imageMode = true;
+                      onImageSelection(selectedImage);
+                    }).catch(() => {
+                      this.imageMode = false;
+                      onImageSelection(null);
+                    });
+                  }}
+                >
+                  <Icon
+                    type="Entypo"
+                    name="images"
+                    active={Boolean(image)}
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      fontSize: 24,
+                      color: image ? '#FB8C00' : '#E0E0E0'
+                    }}
+                  />
+                </Button>
+              </View>
+            ) : null}
+          </View>
         </View>
         {!image && type === 'none' ? (
           <BottomSheet>

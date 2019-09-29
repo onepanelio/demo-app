@@ -16,7 +16,7 @@ const density = PixelRatio.get();
 const tflite = new Tflite();
 let isModelSelected = false;
 const blue = '#25d5fd';
-// const mobile = 'MobileNet';
+const mobile = 'MobileNet';
 const ssd = 'SSD MobileNet';
 const yolo = 'Tiny YOLOv2';
 const deeplab = 'Deeplab';
@@ -26,7 +26,12 @@ let loadingModel = false;
 let modelLoaded = null;
 
 export const MODEL_NAMES = {
-  ssd, yolo, deeplab, posenet, loadingModel
+  mobile,
+  ssd,
+  yolo,
+  deeplab,
+  posenet,
+  loadingModel
 };
 
 export const loadModel = (model = yolo) => {

@@ -12,7 +12,7 @@ import About from './AboutView';
 import CameraView from './CameraView';
 import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 
-import { process as ObjectDetectionLive } from '../modules/detection/ObjectDetection';
+import { process as ObjectDetectionLive, MODEL_NAMES } from '../modules/detection/ObjectDetection';
 
 let videoCache = [];
 const processVideo = (video, cache = true) => {
@@ -57,7 +57,8 @@ const getView = (type, that, image) => {
             }
           }}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess)// , that[`${type.replace(' ', '')}API`])
+            ObjectDetection(imageToProcess, MODEL_NAMES.yolo)
+            // , that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {
                 that.setState({ image: responseImage, srcImage: imageToProcess });
               });

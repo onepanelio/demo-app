@@ -17,7 +17,12 @@ import {
 
 
 const styles = {
-  textInput: { width: '100%', color: '#01579B' },
+  textInput: {
+    width: '100%',
+    color: '#FB8C00',
+    borderRightWidth: 4,
+    borderRightColor: '#01579B'
+  },
   subtitle: {
     color: '#01579B'
   },
@@ -32,7 +37,6 @@ const History = ({ history = [], onSelect = () => {}, onEdit = () => {} }) => {
         return (
           <CardItem
             button
-            bordered
             onPress={() => onSelect(x.url)}
             onLongPress={() => onEdit(x.url)}
           >
@@ -60,7 +64,7 @@ const SettingCard = ({
   const defaultValue = selected ? selected.url : 'ENTER API URL HERE';
 
   return (
-    <Card>
+    <Card style={{ padding: 8 }}>
       <CardItem header bordered>
         <Text style={{ color: '#01579B' }}>{title}</Text>
       </CardItem>

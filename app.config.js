@@ -25,7 +25,7 @@ export const Navigation = [
     description: ''
   },
   {
-    title: 'Rate us',
+    title: 'Feedback',
     description: ''
   }
 ];

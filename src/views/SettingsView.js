@@ -17,7 +17,7 @@ import {
 
 
 const styles = {
-  textInput: { height: 40, width: '100%' },
+  textInput: { width: '100%' },
   subtitle: {
     color: '#aaa',
   },
@@ -66,9 +66,12 @@ const SettingCard = ({
       </CardItem>
       <CardItem>
         <TextInput
+          onStartShouldSetResponder={() => true}
+          onMoveShouldSetResponder={() => true}
           style={styles.textInput}
           placeholder={defaultValue}
           value={value}
+          multiline
           onChangeText={(text) => onChangeText(text)}
           onEndEditing={() => {
             if (value.trim() !== '') {

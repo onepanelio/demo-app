@@ -62,10 +62,12 @@ const getView = (type, that, image) => {
           }}
           onImageSelection={(selectedImage) => {
             that.setState({ image: selectedImage, srcImage: null }, () => {
-              ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
-                .then((responseImage) => {
-                  that.setState({ image: responseImage, srcImage: selectedImage });
-                });
+              if (selectedImage !== null) {
+                ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
+                  .then((responseImage) => {
+                    that.setState({ image: responseImage, srcImage: selectedImage });
+                  });
+              }
             });
           }}
         />
@@ -87,10 +89,12 @@ const getView = (type, that, image) => {
           }}
           onImageSelection={(selectedImage) => {
             that.setState({ image: selectedImage, srcImage: null }, () => {
-              ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
-                .then((responseImage) => {
-                  that.setState({ image: responseImage, srcImage: selectedImage });
-                });
+              if (selectedImage !== null) {
+                ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
+                  .then((responseImage) => {
+                    that.setState({ image: responseImage, srcImage: selectedImage });
+                  });
+              }
             });
           }}
         />

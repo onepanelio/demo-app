@@ -12,6 +12,8 @@ import {
 import AppHeader from '../components/AppHeader';
 
 import Settings from './SettingsView';
+import { getApi } from '../services/SettingsStorageService';
+
 import About from './AboutView';
 import CameraView from './CameraView';
 import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
@@ -35,6 +37,17 @@ const processVideo = (video, cache = true, api) => {
     }
   }
 };
+
+const processImage = (type, selectedImage, that) => {
+  if (selectedImage !== null) {
+    const typeSettingsKey = `${type.replace(' ', '')}History`;
+    getApi(typeSettingsKey)
+      .then((settingValue) => ObjectDetection(selectedImage,
+        settingValue.selected ? settingValue.selected.url : undefined))
+      .then((responseImage) => that.setState({ image: responseImage, srcImage: selectedImage }));
+  }
+};
+
 const getView = (type, that, image) => {
   switch (type) {
     case 'Upload Dataset':
@@ -42,7 +55,12 @@ const getView = (type, that, image) => {
         <CameraView
           type="video"
           sliceSize={4}
-          processVideo={(video) => processVideo(video, true, that[`${type.replace(' ', '')}API`])}
+          processVideo={(video) => {
+            const typeSettingsKey = `${type.replace(' ', '')}History`;
+            getApi(typeSettingsKey)
+              .then((settingValue) => processVideo(video, true,
+                settingValue.selected ? settingValue.selected.url : undefined));
+          }}
         />
       );
     case 'Object Detection':
@@ -53,6 +71,7 @@ const getView = (type, that, image) => {
           srcImage={that.state.srcImage}
           image={image}
           output={that.state.output}
+
           detectObjectsLive={(frame) => {
             if (!image) {
               ObjectDetectionLive(frame, MODEL_NAMES.ssd).then((output) => {
@@ -60,16 +79,14 @@ const getView = (type, that, image) => {
               });
             }
           }}
+
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage, srcImage: null }, () => {
-              if (selectedImage !== null) {
-                ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
-                  .then((responseImage) => {
-                    that.setState({ image: responseImage, srcImage: selectedImage });
-                  });
-              }
-            });
+            that.setState(
+              { image: selectedImage, srcImage: null },
+              processImage(type, selectedImage, that)
+            );
           }}
+
         />
       );
     case 'Object Classification':
@@ -80,6 +97,7 @@ const getView = (type, that, image) => {
           srcImage={that.state.srcImage}
           image={image}
           output={that.state.output}
+
           detectObjectsLive={(frame) => {
             if (!image) {
               ObjectDetectionLive(frame, MODEL_NAMES.mobile).then((output) => {
@@ -87,15 +105,12 @@ const getView = (type, that, image) => {
               });
             }
           }}
+
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage, srcImage: null }, () => {
-              if (selectedImage !== null) {
-                ObjectDetection(selectedImage, that[`${type.replace(' ', '')}API`])
-                  .then((responseImage) => {
-                    that.setState({ image: responseImage, srcImage: selectedImage });
-                  });
-              }
-            });
+            that.setState(
+              { image: selectedImage, srcImage: null },
+              processImage(type, selectedImage, that)
+            );
           }}
         />
       );
@@ -104,10 +119,7 @@ const getView = (type, that, image) => {
       return <About />;
     case 'Settings':
       return (
-        <Settings settingsUpdate={(key, value) => {
-          that.setState({ [key]: value });
-        }}
-        />
+        <Settings />
       );
     case 'Rate us':
       return (

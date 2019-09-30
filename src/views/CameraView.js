@@ -81,11 +81,7 @@ export default class CameraView extends Component {
   }
 
   componentDidUpdate() {
-    const { processImage } = this.props;
-    const { image, processing, error } = this.state;
-    if (processing && image) {
-      processImage(image);
-    }
+    const { error } = this.state;
     if (error) {
       Toast.show({
         text: 'Oops, Its looks like API is down',

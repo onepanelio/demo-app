@@ -17,9 +17,9 @@ import {
 
 
 const styles = {
-  textInput: { width: '100%' },
+  textInput: { width: '100%', color: '#01579B' },
   subtitle: {
-    color: '#aaa',
+    color: '#01579B'
   },
 };
 
@@ -36,7 +36,7 @@ const History = ({ history = [], onSelect = () => {}, onEdit = () => {} }) => {
             onPress={() => onSelect(x.url)}
             onLongPress={() => onEdit(x.url)}
           >
-            <Text>{x.url}</Text>
+            <Text style={{ fontSize: 12, color: '#bbb' }}>{x.url}</Text>
           </CardItem>
         );
       } return null;
@@ -62,7 +62,7 @@ const SettingCard = ({
   return (
     <Card>
       <CardItem header bordered>
-        <Text>{title}</Text>
+        <Text style={{ color: '#01579B' }}>{title}</Text>
       </CardItem>
       <CardItem>
         <TextInput

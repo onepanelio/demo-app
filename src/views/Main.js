@@ -19,16 +19,16 @@ import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 import { process as ObjectDetectionLive, MODEL_NAMES } from '../modules/detection/ObjectDetection';
 
 let videoCache = [];
-const processVideo = (video, cache = true) => {
+const processVideo = (video, cache = true, api) => {
   if (cache) {
     videoCache.push(video);
   }
   if (videoCache.length > 0) {
     const nextVideo = videoCache.pop();
     if (nextVideo) {
-      UploadDataset(nextVideo)// , that[`${type.replace(' ', '')}API`])
+      UploadDataset(nextVideo)
         .then(() => {
-          processVideo(null, false);
+          processVideo(null, false, api);
         }).catch(() => {
           videoCache = [];
         });
@@ -42,7 +42,7 @@ const getView = (type, that, image) => {
         <CameraView
           type="video"
           sliceSize={4}
-          processVideo={processVideo}
+          processVideo={(video) => processVideo(video, true, that[`${type.replace(' ', '')}API`])}
         />
       );
     case 'Object Detection':
@@ -61,8 +61,7 @@ const getView = (type, that, image) => {
             }
           }}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess)
-            // , that[`${type.replace(' ', '')}API`])
+            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {
                 that.setState({ image: responseImage, srcImage: imageToProcess });
               });
@@ -88,8 +87,7 @@ const getView = (type, that, image) => {
             }
           }}
           processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess)
-            // , that[`${type.replace(' ', '')}API`])
+            ObjectDetection(imageToProcess, that[`${type.replace(' ', '')}API`])
               .then((responseImage) => {
                 that.setState({ image: responseImage, srcImage: imageToProcess });
               });

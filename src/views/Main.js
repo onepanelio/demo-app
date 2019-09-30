@@ -60,15 +60,14 @@ const getView = (type, that, image) => {
               });
             }
           }}
-          processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess)
-            // , that[`${type.replace(' ', '')}API`])
-              .then((responseImage) => {
-                that.setState({ image: responseImage, srcImage: imageToProcess });
-              });
-          }}
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage, srcImage: null });
+            that.setState({ image: selectedImage, srcImage: null }, () => {
+              ObjectDetection(selectedImage, 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/object-detection/api/upload')
+              // , that[`${type.replace(' ', '')}API`])
+                .then((responseImage) => {
+                  that.setState({ image: responseImage, srcImage: selectedImage });
+                });
+            });
           }}
         />
       );
@@ -87,15 +86,14 @@ const getView = (type, that, image) => {
               });
             }
           }}
-          processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess)
-            // , that[`${type.replace(' ', '')}API`])
-              .then((responseImage) => {
-                that.setState({ image: responseImage, srcImage: imageToProcess });
-              });
-          }}
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage, srcImage: null });
+            that.setState({ image: selectedImage, srcImage: null }, () => {
+              ObjectDetection(selectedImage, 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/classification/api/upload')
+              // , that[`${type.replace(' ', '')}API`])
+                .then((responseImage) => {
+                  that.setState({ image: responseImage, srcImage: selectedImage });
+                });
+            });
           }}
         />
       );

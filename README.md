@@ -8,7 +8,7 @@ Currently, the application host the following features,
 2. In device object classification.
 3. Record & Upload video dataset to train model running in upstream server.
 4. Configurable API endpoints to classify, detect and upload dataset.
-5. Supports multiple model types  to run inference realtime on device.
+5. Supports multiple model types  to run inference realtime on device. (currently not configurable)
 
 
 ## Getting Started
@@ -22,12 +22,11 @@ The application expects the following tools installed to build the application.
 **#1.  NodeJS** \
 You can download the binaries for NodeJs from [here](https://nodejs.org/en/download/).
 
-For more comprehesive guide on installation for your OS refer to the following respective link.
-[Windows](https://nodesource.com/blog/installing-nodejs-tutorial-windows/) 
-[Mac](https://nodesource.com/blog/installing-nodejs-tutorial-mac-os-x/)
+For more comprehesive guide on installation for your OS refer the link
+[Windows](https://nodesource.com/blog/installing-nodejs-tutorial-windows/) / [Mac](https://nodesource.com/blog/installing-nodejs-tutorial-mac-os-x/)
 
 **#2.  Yarn** \
-*The project uses yarn for node package management over npm.*
+*The project uses yarn for node package management over npm.* \
 You can download the binaries for yarn from [here](https://yarnpkg.com/lang/en/)
 
 Select the *Operating System* and *Version* to find the comprehensive instruction on how to setup yarn for your system. 
@@ -41,7 +40,7 @@ Refer [here](https://cocoapods.org/)  on how to install *CocoaPods*
 	You need to have the react native environment setup for running or building this project.
 	
 For more information on how to setup you environment for react-native head over [here](https://facebook.github.io/react-native/docs/getting-started.html) \
-Make sure to see instruction for  **React Native CLI Quickstart** and not for ~~Expo CLI Quickstart~~ \
+Make sure to see instruction for  **React Native CLI Quickstart** and not for ~~Expo CLI Quickstart~~
 
 *NOTE: \
 For compiling apps for android and ios react native requires you to have Android Studio (or Android SDK) and Xcode installed on your system* 
@@ -51,7 +50,7 @@ For compiling apps for android and ios react native requires you to have Android
 
 ### Installing
 
-*Now that we have our environment ready, we need to install our application dependencies.* \
+*Now that we have our environment ready, we need to install our application dependencies.*
 
 Firstly, 
 Change your directory to the root of the cloned repository, 
@@ -87,12 +86,12 @@ Now, Its time for deployment.
 > 
 Now, you should see the application running on your android device.
 
-### **IOS**
+### **IOS** ( currently builds failing )
 
-***Deploying to a simulator***
+***Deploying to a simulator*** \
 Follow the guide [here](https://facebook.github.io/react-native/docs/running-on-simulator-ios) to run deploy it on a simulator.
 
-***Deploying to an IOS physical device,***
+***Deploying to an IOS physical device,*** \
  Follow the guide [here](https://facebook.github.io/react-native/docs/running-on-device) to run the ios application on your device.
 
 ## Built With

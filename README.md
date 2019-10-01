@@ -9,6 +9,8 @@ Currently, the application host the following features,
 3. Record & Upload video dataset to train model running in upstream server.
 4. Configurable API endpoints to classify, detect and upload dataset.
 5. Supports multiple model types  to run inference realtime on device. (currently not configurable)
+## App Structure
+![App Flow Diagram](/assets/mobile_app_flow.png)
 
 
 ## Getting Started

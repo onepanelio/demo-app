@@ -1,5 +1,6 @@
 
-# Onepanel Demo API
+# Onepanel Demo Application
+This app showcases a full pipeline, right from Data Captute using remote devices and uploading to Onepanel Datasets using API's hosted at Onepanel Workspaces, Using these data to annotate using CVAT at Onepanel at training model , deploying these models using API's and hopw to consume them using remote / Mobile devices. 
 
 This application is targeted to run on android and ios devices.
 

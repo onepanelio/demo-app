@@ -4,11 +4,12 @@
 This application is targeted to run on android and ios devices.
 
 Currently, the application host the following features,
-1. In device object detection.
-2. In device object classification.
-3. Record & Upload video dataset to train model running in upstream server.
-4. Configurable API endpoints to classify, detect and upload dataset.
-5. Supports multiple model types  to run inference realtime on device. (currently not configurable)
+1. On-device object detection using SSD models trained on Onepanel.
+2. On-device object classification using models trained on Onepanel.
+3. Record & Upload video dataset  to train model running in upstream server hosted on Onepanel Workspaces.
+4. Configurable API endpoints to classify, detect and upload dataset. These API endpoints are hosted in Onepanel Workspaces.
+5. Supports multiple model types  to run inference realtime on device. (currently not configurable) 
+
 ## App Structure
 ![App Flow Diagram](/assets/mobile_app_flow.png)
 

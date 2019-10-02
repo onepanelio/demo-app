@@ -6235,10 +6235,9 @@ test-exclude@^5.2.3:
     read-pkg-up "^4.0.0"
     require-main-filename "^2.0.0"
 
-tflite-react-native@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/tflite-react-native/-/tflite-react-native-0.0.5.tgz#bb2a78579e84371bddc455a79bd39d28c98a218b"
-  integrity sha512-aBajq5yQQ8UiB92tIk+v9BIKZTFGwCTHegfefISgnXwqPiPAAvKhdX6Vb80kJFPTUjXB53w/NZQT9qCyVBYMyA==
+"tflite-react-native@https://github.com/kaelhem/tflite-react-native#master":
+  version "0.0.6"
+  resolved "https://github.com/kaelhem/tflite-react-native#b6637839472d45ba3c5b284d6dbaa2f285a809d2"
 
 throat@^4.0.0, throat@^4.1.0:
   version "4.1.0"

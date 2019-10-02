@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/jsx-no-bind */
 // This is an example code for the camera//
 import React from 'react';
@@ -5,6 +6,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  AppState
 } from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
@@ -12,11 +14,13 @@ import { RNCamera } from 'react-native-camera';
 export default class Camera extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      appState: AppState.currentState,
+    };
   }
 
-  static getDerivedStateFromProps(props) {
-    return { upload: props.upload };
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
   }
 
   componentDidUpdate(props, state) {
@@ -41,9 +45,30 @@ export default class Camera extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+
+  static getDerivedStateFromProps(props) {
+    return { upload: props.upload };
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    // eslint-disable-next-line react/destructuring-assignment
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      if (this.camera) {
+        this.camera.resumePreview();
+      }
+    } else if (this.camera) {
+      this.camera.pausePreview();
+    }
+    this.setState({ appState: nextAppState });
+  }
+
   startLiveInferenceImageShot() {
     const { capturedImage, sensitivity = 1000 } = this.props;
-    if (capturedImage) {
+    if (capturedImage && this.camera) {
       this.camera.takePictureAsync({
         quality: 0.8,
         fixOrientation: true,
@@ -56,60 +81,62 @@ export default class Camera extends React.Component {
       });
 
       this.liveInferenceTimer = setTimeout(() => {
-        if (this.camera) {
-          this.startLiveInferenceImageShot();
-        }
+        this.startLiveInferenceImageShot();
       }, sensitivity);
     }
   }
 
   recordVideoFor(secs) {
     const { videoSlice, close = () => {} } = this.props;
-    this.camera.recordAsync({
-      quality: RNCamera.Constants.VideoQuality['480p']
-    }).then((video) => {
-      const { upload } = this.state;
-      if (upload) {
-        videoSlice(video);
-        this.recordVideoFor(secs);
-      }
-    }).catch((err) => {
-      console.log(err);
-      close();
-    });
-    this.timer = setTimeout(() => {
-      if (this.camera) {
-        this.camera.stopRecording();
-      } else {
+    if (this.camera) {
+      this.camera.recordAsync({
+        quality: RNCamera.Constants.VideoQuality['480p']
+      }).then((video) => {
+        const { upload } = this.state;
+        if (upload) {
+          videoSlice(video);
+          this.recordVideoFor(secs);
+        }
+      }).catch((err) => {
+        console.log(err);
         close();
-      }
-    }, secs * 1000);
+      });
+      this.timer = setTimeout(() => {
+        if (this.camera) {
+          this.camera.stopRecording();
+        } else {
+          close();
+        }
+      }, secs * 1000);
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <RNCamera
-          captureAudio={false}
-          ref={(ref) => {
-            this.camera = ref;
-          }}
-          style={styles.preview}
-          type={RNCamera.Constants.Type.back}
-          flashMode={RNCamera.Constants.FlashMode.off}
-          androidCameraPermissionOptions={{
-            title: 'Permission to use camera',
-            message: 'We need your permission to use your camera',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-          androidRecordAudioPermissionOptions={{
-            title: 'Permission to use audio recording',
-            message: 'We need your permission to use your audio',
-            buttonPositive: 'Ok',
-            buttonNegative: 'Cancel',
-          }}
-        />
+        {(
+          <RNCamera
+            captureAudio={false}
+            ref={(ref) => {
+              this.camera = ref;
+            }}
+            style={styles.preview}
+            type={RNCamera.Constants.Type.back}
+            flashMode={RNCamera.Constants.FlashMode.off}
+            androidCameraPermissionOptions={{
+              title: 'Permission to use camera',
+              message: 'We need your permission to use your camera',
+              buttonPositive: 'Ok',
+              buttonNegative: 'Cancel',
+            }}
+            androidRecordAudioPermissionOptions={{
+              title: 'Permission to use audio recording',
+              message: 'We need your permission to use your audio',
+              buttonPositive: 'Ok',
+              buttonNegative: 'Cancel',
+            }}
+          />
+        )}
       </View>
     );
   }

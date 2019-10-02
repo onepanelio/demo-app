@@ -50,8 +50,8 @@ export default class App extends Component {
   }
 
   onMenuItemSelected = (item) => {
-    if (item === 'Rate us') {
-      Linking.openURL('https://www.onepanel.io/');
+    if (item === 'Feedback') {
+      Linking.openURL('https://www.onepanel.io/contact');
     } else {
       this.setState({
         isOpen: false,

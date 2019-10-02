@@ -5,9 +5,15 @@ import {
   Text,
 } from 'native-base';
 
+import {
+  AppState
+} from 'react-native';
+
 import AppHeader from '../components/AppHeader';
 
 import Settings from './SettingsView';
+import { getApi } from '../services/SettingsStorageService';
+
 import About from './AboutView';
 import CameraView from './CameraView';
 import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
@@ -15,22 +21,33 @@ import { ObjectDetection, UploadDataset } from '../services/OnepanelAPI';
 import { process as ObjectDetectionLive, MODEL_NAMES } from '../modules/detection/ObjectDetection';
 
 let videoCache = [];
-const processVideo = (video, cache = true) => {
+const processVideo = (video, cache = true, api) => {
   if (cache) {
     videoCache.push(video);
   }
   if (videoCache.length > 0) {
     const nextVideo = videoCache.pop();
     if (nextVideo) {
-      UploadDataset(nextVideo)// , that[`${type.replace(' ', '')}API`])
+      UploadDataset(nextVideo)
         .then(() => {
-          processVideo(null, false);
+          processVideo(null, false, api);
         }).catch(() => {
           videoCache = [];
         });
     }
   }
 };
+
+const processImage = (type, selectedImage, that) => {
+  if (selectedImage !== null) {
+    const typeSettingsKey = `${type.replace(' ', '')}History`;
+    getApi(typeSettingsKey)
+      .then((settingValue) => ObjectDetection(selectedImage,
+        settingValue.selected ? settingValue.selected.url : undefined))
+      .then((responseImage) => that.setState({ image: responseImage, srcImage: selectedImage }));
+  }
+};
+
 const getView = (type, that, image) => {
   switch (type) {
     case 'Upload Dataset':
@@ -38,33 +55,62 @@ const getView = (type, that, image) => {
         <CameraView
           type="video"
           sliceSize={4}
-          processVideo={processVideo}
+          processVideo={(video) => {
+            const typeSettingsKey = `${type.replace(' ', '')}History`;
+            getApi(typeSettingsKey)
+              .then((settingValue) => processVideo(video, true,
+                settingValue.selected ? settingValue.selected.url : undefined));
+          }}
         />
       );
     case 'Object Detection':
-    case 'Object Classification':
       return (
         <CameraView
+          key={type}
           type="both"
           srcImage={that.state.srcImage}
           image={image}
           output={that.state.output}
+
           detectObjectsLive={(frame) => {
             if (!image) {
-              ObjectDetectionLive(frame).then((output) => {
+              ObjectDetectionLive(frame, MODEL_NAMES.ssd).then((output) => {
                 that.setState({ output });
               });
             }
           }}
-          processImage={(imageToProcess) => {
-            ObjectDetection(imageToProcess, MODEL_NAMES.yolo)
-            // , that[`${type.replace(' ', '')}API`])
-              .then((responseImage) => {
-                that.setState({ image: responseImage, srcImage: imageToProcess });
-              });
-          }}
+
           onImageSelection={(selectedImage) => {
-            that.setState({ image: selectedImage, srcImage: null });
+            that.setState(
+              { image: selectedImage, srcImage: null },
+              processImage(type, selectedImage, that)
+            );
+          }}
+
+        />
+      );
+    case 'Object Classification':
+      return (
+        <CameraView
+          key={type}
+          type="both"
+          srcImage={that.state.srcImage}
+          image={image}
+          output={that.state.output}
+
+          detectObjectsLive={(frame) => {
+            if (!image) {
+              ObjectDetectionLive(frame, MODEL_NAMES.mobile).then((output) => {
+                that.setState({ output });
+              });
+            }
+          }}
+
+          onImageSelection={(selectedImage) => {
+            that.setState(
+              { image: selectedImage, srcImage: null },
+              processImage(type, selectedImage, that)
+            );
           }}
         />
       );
@@ -73,10 +119,7 @@ const getView = (type, that, image) => {
       return <About />;
     case 'Settings':
       return (
-        <Settings settingsUpdate={(key, value) => {
-          that.setState({ [key]: value });
-        }}
-        />
+        <Settings />
       );
     case 'Rate us':
       return (
@@ -96,13 +139,35 @@ Screen
 export default class Main extends Component {
   constructor(props) {
     super(props);
-    this.state = { image: null };
+    this.state = { image: null, appState: AppState.currentState };
+  }
+
+  componentDidMount() {
+    AppState.addEventListener('change', this.handleAppStateChange);
+  }
+
+  componentWillUnmount() {
+    AppState.removeEventListener('change', this.handleAppStateChange);
+  }
+
+  handleAppStateChange = (nextAppState) => {
+    // eslint-disable-next-line react/destructuring-assignment
+    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
+      // nothing
+    }
+    this.setState({ appState: nextAppState });
   }
 
   render() {
     const { toggleSideBar, title } = this.props;
-    const { image } = this.state;
+    const { image, appState } = this.state;
+
+    if (appState !== 'active') {
+      return null;
+    }
+
     const view = getView(title, this, image);
+
     return (
       <Container>
         <AppHeader openDrawer={toggleSideBar} title={title} />
@@ -110,7 +175,7 @@ export default class Main extends Component {
           padder={title === 'Home' || title === 'About' || title === 'Settings'}
           contentContainerStyle={{ flexGrow: 1, position: 'relative' }}
         >
-          {view}
+          {appState === 'active' ? view : null}
         </Content>
       </Container>
     );

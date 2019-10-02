@@ -2,19 +2,29 @@ import React, { Component } from 'react';
 import {
   ScrollView,
   TextInput,
-  AsyncStorage
 } from 'react-native';
+
 import {
   Text,
   Card,
   CardItem,
 } from 'native-base';
 
+import {
+  storeApi,
+  getApi
+} from '../services/SettingsStorageService';
+
 
 const styles = {
-  textInput: { height: 40, width: '100%' },
+  textInput: {
+    width: '100%',
+    color: '#FB8C00',
+    borderRightWidth: 4,
+    borderRightColor: '#01579B'
+  },
   subtitle: {
-    color: '#aaa',
+    color: '#01579B'
   },
 };
 
@@ -27,11 +37,10 @@ const History = ({ history = [], onSelect = () => {}, onEdit = () => {} }) => {
         return (
           <CardItem
             button
-            bordered
             onPress={() => onSelect(x.url)}
             onLongPress={() => onEdit(x.url)}
           >
-            <Text>{x.url}</Text>
+            <Text style={{ fontSize: 12, color: '#bbb' }}>{x.url}</Text>
           </CardItem>
         );
       } return null;
@@ -48,36 +57,6 @@ const History = ({ history = [], onSelect = () => {}, onEdit = () => {} }) => {
   ) : null;
 };
 
-// eslint-disable-next-line no-underscore-dangle
-const _storeData = async (key, data) => {
-  const isObject = typeof data === 'object';
-  try {
-    await AsyncStorage.setItem(
-      `@onepanel:${key}`,
-      isObject ? JSON.stringify(data) : data
-    );
-  } catch (error) {
-    // Error saving data
-  }
-};
-
-// eslint-disable-next-line no-underscore-dangle
-const _retrieveData = async (key, _default) => {
-  const isObject = typeof _default === 'object';
-  try {
-    const value = await AsyncStorage.getItem(`@onepanel:${key}`);
-    if (value !== null) {
-      if (isObject) return JSON.parse(value);
-      return value;
-    }
-  } catch (error) {
-    // Error retrieving data
-    console.log(error);
-  }
-
-  return _default;
-};
-
 const SettingCard = ({
   title, history, selected, onChange
 }) => {
@@ -85,15 +64,18 @@ const SettingCard = ({
   const defaultValue = selected ? selected.url : 'ENTER API URL HERE';
 
   return (
-    <Card>
+    <Card style={{ padding: 8 }}>
       <CardItem header bordered>
-        <Text>{title}</Text>
+        <Text style={{ color: '#01579B' }}>{title}</Text>
       </CardItem>
       <CardItem>
         <TextInput
+          onStartShouldSetResponder={() => true}
+          onMoveShouldSetResponder={() => true}
           style={styles.textInput}
           placeholder={defaultValue}
           value={value}
+          multiline
           onChangeText={(text) => onChangeText(text)}
           onEndEditing={() => {
             if (value.trim() !== '') {
@@ -131,49 +113,19 @@ export default class Settings extends Component {
   }
 
   componentDidMount() {
-    const { settingsUpdate } = this.props;
-    this.getHistory('ObjectDetectionHistory').then((selected) => {
-      settingsUpdate('ObjectDetectionAPI', selected.url);
-    });
-    this.getHistory('ObjectClassificationHistory').then((selected) => {
-      settingsUpdate('ObjectClassificationAPI', selected.url);
-    });
-    this.getHistory('UploadDatasetHistory').then((selected) => {
-      settingsUpdate('UploadDatasetAPI', selected.url);
-    });
+    this.loadHistory('ObjectDetectionHistory');
+    this.loadHistory('ObjectClassificationHistory');
+    this.loadHistory('UploadDatasetHistory');
   }
 
-  getHistory(key) {
-    return _retrieveData(key, []).then((history) => {
-      const selected = history.find((x) => x.isSelected);
-      this.setState({ [key]: history, [`${key}Selected`]: selected });
-      return selected;
-    });
+  async loadHistory(key) {
+    const { history, selected } = await getApi(key, []);
+    this.setState({ [key]: history, [`${key}Selected`]: selected });
   }
 
   addNewAPI(key, value) {
-    // eslint-disable-next-line react/destructuring-assignment
-    let history = this.state[key];
-    const lastSelected = history.find((x) => x.isSelected);
-    const selectedNow = history.find((x) => x.url === value);
-    if (lastSelected) {
-      lastSelected.isSelected = false;
-    }
-
-    if (selectedNow) {
-      selectedNow.isSelected = true;
-    } else {
-      history = [
-        {
-          url: value,
-          isSelected: true,
-        },
-        ...history.slice(0, 3),
-      ];
-    }
-
-    _storeData(key, history).then(() => {
-      this.getHistory(key);
+    storeApi(key, value).then(() => {
+      this.loadHistory(key);
     });
   }
 

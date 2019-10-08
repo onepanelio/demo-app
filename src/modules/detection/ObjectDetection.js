@@ -145,10 +145,15 @@ export const process = async (image, model = yolo) => {
   loadModel(model);
   if (loadingModel || modelLoaded === null) return { view: null, timeStamp };
   const res = await onImageSelection(image.uri);
+
   RNFS.unlink(image.uri);
+  const view = renderResults(res.recognitions,
+    image.width / density, image.height / density, image.deviceOrientation);
+
+  console.log(`Time taken ${Date.now() - timeStamp}`);
+
   return {
-    view: renderResults(res.recognitions,
-      image.width / density, image.height / density, image.deviceOrientation),
+    view,
     timeStamp
   };
 };

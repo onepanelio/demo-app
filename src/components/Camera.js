@@ -10,6 +10,28 @@ import {
 } from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
+import SystemSetting from 'react-native-system-setting';
+
+let currentVolume = null;
+// get the current volume
+
+// listen the volume changing if you need
+let volumeListener = null;
+
+const updateVolume = () => {
+  SystemSetting.getVolume().then((volume) => {
+    currentVolume = volume;
+    console.log(`Current volume is ${volume}`);
+  });
+  if (volumeListener) {
+    SystemSetting.removeVolumeListener(volumeListener);
+  }
+  volumeListener = SystemSetting.addVolumeListener((data) => {
+    currentVolume = data.value;
+    console.log(currentVolume);
+  });
+};
+
 
 export default class Camera extends React.Component {
   constructor(props) {
@@ -20,6 +42,7 @@ export default class Camera extends React.Component {
   }
 
   componentDidMount() {
+    updateVolume();
     AppState.addEventListener('change', this.handleAppStateChange);
   }
 
@@ -46,6 +69,9 @@ export default class Camera extends React.Component {
   }
 
   componentWillUnmount() {
+    // remove listener when you need it no more
+    SystemSetting.removeVolumeListener(volumeListener);
+    SystemSetting.setVolume(currentVolume);
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -57,11 +83,9 @@ export default class Camera extends React.Component {
   handleAppStateChange = (nextAppState) => {
     // eslint-disable-next-line react/destructuring-assignment
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      if (this.camera) {
-        this.camera.resumePreview();
-      }
-    } else if (this.camera) {
-      this.camera.pausePreview();
+      updateVolume();
+    } else {
+      SystemSetting.setVolume(currentVolume);
     }
     this.setState({ appState: nextAppState });
   }
@@ -69,6 +93,8 @@ export default class Camera extends React.Component {
   startLiveInferenceImageShot() {
     const { capturedImage, sensitivity = 300 } = this.props;
     if (capturedImage && this.camera) {
+      // change the volume
+      SystemSetting.setVolume(0);
       this.camera.takePictureAsync({
         width: 240,
         quality: 0.8,

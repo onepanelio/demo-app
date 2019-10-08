@@ -36,6 +36,8 @@ const updateVolume = () => {
 export default class Camera extends React.Component {
   isCapturing = false;
 
+  droppedFrame = 0;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -46,6 +48,9 @@ export default class Camera extends React.Component {
   componentDidMount() {
     updateVolume();
     AppState.addEventListener('change', this.handleAppStateChange);
+    if (this.camera && !this.props.videoSlice) {
+      this.startLiveInferenceImageShot();
+    }
   }
 
   componentDidUpdate(props, state) {
@@ -95,9 +100,11 @@ export default class Camera extends React.Component {
   }
 
   startLiveInferenceImageShot() {
-    const { capturedImage, sensitivity = 300 } = this.props;
+    const { capturedImage, sensitivity = 1000 / 60 } = this.props;
     if (capturedImage && this.camera) {
       if (!this.isCapturing) {
+        // console.log(`Dropped Frame: ${this.droppedFrame % 300}`);
+        this.droppedFrame = 0;
         this.isCapturing = true;
         // change the volume
         SystemSetting.setVolume(0);
@@ -117,12 +124,12 @@ export default class Camera extends React.Component {
           this.isCapturing = false;
           console.timeEnd('TakePicture');
           console.log(err);
+        }).finally(() => {
+          this.liveInferenceTimer = setTimeout(() => {
+            this.startLiveInferenceImageShot();
+          }, sensitivity);
         });
-      }
-
-      this.liveInferenceTimer = setTimeout(() => {
-        this.startLiveInferenceImageShot();
-      }, sensitivity);
+      } else this.droppedFrame += 1;
     }
   }
 

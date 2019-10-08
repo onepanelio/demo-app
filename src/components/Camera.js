@@ -34,6 +34,8 @@ const updateVolume = () => {
 
 
 export default class Camera extends React.Component {
+  isCapturing = false;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -72,6 +74,7 @@ export default class Camera extends React.Component {
     // remove listener when you need it no more
     SystemSetting.removeVolumeListener(volumeListener);
     SystemSetting.setVolume(currentVolume);
+    this.isCapturing = false;
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
 
@@ -86,6 +89,7 @@ export default class Camera extends React.Component {
       updateVolume();
     } else {
       SystemSetting.setVolume(currentVolume);
+      this.isCapturing = false;
     }
     this.setState({ appState: nextAppState });
   }
@@ -93,19 +97,28 @@ export default class Camera extends React.Component {
   startLiveInferenceImageShot() {
     const { capturedImage, sensitivity = 300 } = this.props;
     if (capturedImage && this.camera) {
-      // change the volume
-      SystemSetting.setVolume(0);
-      this.camera.takePictureAsync({
-        width: 240,
-        quality: 0.8,
-        fixOrientation: true,
-        orientation: 'portrait',
-        forceUpOrientation: true
-      }).then((image) => {
-        capturedImage(image);
-      }).catch((err) => {
-        console.log(err);
-      });
+      if (!this.isCapturing) {
+        this.isCapturing = true;
+        // change the volume
+        SystemSetting.setVolume(0);
+        console.time('TakePicture');
+        this.camera.takePictureAsync({
+          width: 240,
+          quality: 0.8,
+          fixOrientation: true,
+          orientation: 'portrait',
+          forceUpOrientation: true
+        }).then((image) => {
+          this.isCapturing = false;
+          SystemSetting.setVolume(currentVolume);
+          console.timeEnd('TakePicture');
+          capturedImage(image);
+        }).catch((err) => {
+          this.isCapturing = false;
+          console.timeEnd('TakePicture');
+          console.log(err);
+        });
+      }
 
       this.liveInferenceTimer = setTimeout(() => {
         this.startLiveInferenceImageShot();

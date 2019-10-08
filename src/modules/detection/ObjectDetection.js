@@ -134,6 +134,7 @@ const onSelectModel = (model) => new Promise((resolve, reject) => {
   tflite.loadModel({
     model: modelFile,
     labels: labelsFile,
+    numThreads: 4
   },
   (err, res) => {
     if (err) { reject(err); } else { resolve(res); }
@@ -165,7 +166,10 @@ function renderResults(recognitions, imageWidth, imageHeight, orientation, model
     case ssd:
     case yolo:
       return recognitions
-        .filter((res) => (res.confidenceInClass * 100).toFixed(0) >= 50).map((res, id) => {
+        .filter((res) => (res.confidenceInClass * 100).toFixed(0) >= 50)
+        // .slice(recognitions.length - (recognitions.length <= 3 ? recognitions.length : 3),
+        //   recognitions.length)
+        .map((res, id) => {
           const left = res.rect.x * w;
           const top = res.rect.y * h;
           const width = res.rect.w * w;

@@ -151,9 +151,10 @@ export default class Main extends Component {
   }
 
   handleAppStateChange = (nextAppState) => {
-    // eslint-disable-next-line react/destructuring-assignment
-    if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      // nothing
+    const { title, toggleSideBar } = this.props;
+    const { appState } = this.state;
+    if (appState.match(/inactive|background/) && nextAppState === 'active') {
+      if (title === 'Object Detection' || title === 'Object Classification') { toggleSideBar(); }
     }
     this.setState({ appState: nextAppState });
   }

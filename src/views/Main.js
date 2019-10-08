@@ -154,7 +154,7 @@ export default class Main extends Component {
     const { title, toggleSideBar } = this.props;
     const { appState } = this.state;
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
-      if (title === 'Object Detection' || title === 'Object Classification') { toggleSideBar(); }
+      // if (title === 'Object Detection' || title === 'Object Classification') { toggleSideBar(); }
     }
     this.setState({ appState: nextAppState });
   }

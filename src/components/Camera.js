@@ -10,28 +10,6 @@ import {
 } from 'react-native';
 
 import { RNCamera } from 'react-native-camera';
-import SystemSetting from 'react-native-system-setting';
-
-let currentVolume = null;
-// get the current volume
-
-// listen the volume changing if you need
-let volumeListener = null;
-
-const updateVolume = () => {
-  SystemSetting.getVolume().then((volume) => {
-    currentVolume = volume;
-    console.log(`Current volume is ${volume}`);
-  });
-  if (volumeListener) {
-    SystemSetting.removeVolumeListener(volumeListener);
-  }
-  volumeListener = SystemSetting.addVolumeListener((data) => {
-    currentVolume = data.value;
-    console.log(currentVolume);
-  });
-};
-
 
 export default class Camera extends React.Component {
   isCapturing = false;
@@ -46,7 +24,6 @@ export default class Camera extends React.Component {
   }
 
   componentDidMount() {
-    updateVolume();
     AppState.addEventListener('change', this.handleAppStateChange);
     if (this.camera && !this.props.videoSlice) {
       this.startLiveInferenceImageShot();
@@ -76,9 +53,6 @@ export default class Camera extends React.Component {
   }
 
   componentWillUnmount() {
-    // remove listener when you need it no more
-    SystemSetting.removeVolumeListener(volumeListener);
-    SystemSetting.setVolume(currentVolume);
     this.isCapturing = false;
     AppState.removeEventListener('change', this.handleAppStateChange);
   }
@@ -91,9 +65,8 @@ export default class Camera extends React.Component {
   handleAppStateChange = (nextAppState) => {
     // eslint-disable-next-line react/destructuring-assignment
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      updateVolume();
+      // nothing
     } else {
-      SystemSetting.setVolume(currentVolume);
       this.isCapturing = false;
     }
     this.setState({ appState: nextAppState });
@@ -106,9 +79,6 @@ export default class Camera extends React.Component {
         // console.log(`Dropped Frame: ${this.droppedFrame % 300}`);
         this.droppedFrame = 0;
         this.isCapturing = true;
-        // change the volume
-        SystemSetting.setVolume(0);
-        console.time('TakePicture');
         this.camera.takePictureAsync({
           width: 240,
           quality: 0.8,
@@ -117,12 +87,9 @@ export default class Camera extends React.Component {
           forceUpOrientation: true
         }).then((image) => {
           this.isCapturing = false;
-          SystemSetting.setVolume(currentVolume);
-          console.timeEnd('TakePicture');
           capturedImage(image);
         }).catch((err) => {
           this.isCapturing = false;
-          console.timeEnd('TakePicture');
           console.log(err);
         }).finally(() => {
           this.liveInferenceTimer = setTimeout(() => {

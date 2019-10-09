@@ -151,7 +151,6 @@ export default class Main extends Component {
   }
 
   handleAppStateChange = (nextAppState) => {
-    const { title, toggleSideBar } = this.props;
     const { appState } = this.state;
     if (appState.match(/inactive|background/) && nextAppState === 'active') {
       // if (title === 'Object Detection' || title === 'Object Classification') { toggleSideBar(); }

@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import RNFetchBlob from 'rn-fetch-blob';
+import {Platform} from 'react-native';
 
 import uuidv4 from 'uuid/v4';
 
@@ -37,15 +38,15 @@ export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-dem
 };
 
 export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/dataset-upload-api/api/upload/') => {
-  const fileName = `${uuidv4()}-${Date.now()}.mp4`;
-
+  const extension = video.uri.substr(video.uri.lastIndexOf('.'));
+  let fileName = `${uuidv4()}-${Date.now()}${extension}`;
   return RNFetchBlob.fetch('POST', api, {
-    ...config.headers
+    ...config.headerss
   }, [{
-    contentType: 'video/mp4',
+    contentType: `video/${extension.replace('.','')}`,
     name: 'file',
     filename: fileName,
-    data: RNFetchBlob.wrap(video.uri)
+    data: RNFetchBlob.wrap(Platform.OS==='ios'?video.uri.replace('file://',''):video.uri)
   }]).then((res) => {
     console.log(res);
     RNFS.unlink(video.uri);

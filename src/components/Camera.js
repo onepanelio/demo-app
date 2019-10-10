@@ -25,7 +25,7 @@ export default class Camera extends React.Component {
 
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
-    if (this.camera && !this.props.videoSlice) {
+    if (!this.props.videoSlice) {
       this.startLiveInferenceImageShot();
     }
   }
@@ -65,7 +65,9 @@ export default class Camera extends React.Component {
   handleAppStateChange = (nextAppState) => {
     // eslint-disable-next-line react/destructuring-assignment
     if (this.state.appState.match(/inactive|background/) && nextAppState === 'active') {
-      // nothing
+      if (!this.props.videoSlice) {
+        setTimeout(() => this.startLiveInferenceImageShot(), 5000);
+      }
     } else {
       this.isCapturing = false;
     }
@@ -92,12 +94,14 @@ export default class Camera extends React.Component {
           this.isCapturing = false;
           console.log(err);
         }).finally(() => {
-          this.liveInferenceTimer = setTimeout(() => {
-            this.startLiveInferenceImageShot();
-          }, sensitivity);
+          if (this.state.appState === 'active') {
+            this.liveInferenceTimer = setTimeout(() => {
+              this.startLiveInferenceImageShot();
+            }, sensitivity);
+          }
         });
       } else this.droppedFrame += 1;
-    }
+    } else if (this.state.appState === 'active') setTimeout(() => this.startLiveInferenceImageShot(), 2000);
   }
 
   recordVideoFor(secs) {

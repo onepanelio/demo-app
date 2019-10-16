@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import RNFetchBlob from 'rn-fetch-blob';
-import {Platform} from 'react-native';
+import {Platform, Alert} from 'react-native';
 
 import uuidv4 from 'uuid/v4';
 
@@ -21,7 +21,7 @@ const config = {
   referrer: 'no-referrer', // no-referrer, *client
 };
 
-export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-demo/projects/app-api/workspaces/app-api-v1/api/upload') => {
+export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/object-detection-api/svc1/upload') => {
   const { fileName } = image;
 
   return RNFetchBlob.fetch('POST', api, {
@@ -32,12 +32,12 @@ export const ObjectDetection = (image, api = 'https://c.onepanel.io/onepanel-dem
     filename: fileName,
     data: image.data
   }]).then((res) => ({ uri: `data:${res.respInfo.headers['content-type']};base64,${res.data}` }))
-    .catch(() => {
-      // console.error(error);
+    .catch((err) => {
+      Alert.alert("API IS DOWN", err);
     });
 };
 
-export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/dataset-upload-api/api/upload/') => {
+export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/projects/mobile-demo/workspaces/dataset-upload-api/svc0/upload/') => {
   const extension = video.uri.substr(video.uri.lastIndexOf('.'));
   let fileName = `${uuidv4()}-${Date.now()}${extension}`;
   return RNFetchBlob.fetch('POST', api, {
@@ -49,9 +49,12 @@ export const UploadDataset = (video, api = 'https://c.onepanel.io/onepanel-demo/
     data: RNFetchBlob.wrap(Platform.OS==='ios'?video.uri.replace('file://',''):video.uri)
   }]).then((res) => {
     console.log(res);
+    if(res.text().toLowerCase().indexOf('error')!==-1){
+      Alert.alert("Something went wrong", err);
+    }
     RNFS.unlink(video.uri);
-  }).catch((error) => {
-    console.log(error);
+  }).catch((err) => {
+    Alert.alert("API IS DOWN", err);
   });
 };
 

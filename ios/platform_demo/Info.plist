@@ -40,7 +40,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Required to detect object</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>used to up</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app requires access to the photo library.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

@@ -74,7 +74,6 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = platform_demo/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = platform_demo/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = platform_demo/main.m; sourceTree = "<group>"; };
-		1AEE3219058E4883A21FA031 /* libRNTensorflow.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNTensorflow.a; sourceTree = "<group>"; };
 		1C4CEB8C0E8AE172E4E71E98 /* Pods-platform_demo-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-platform_demo-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-platform_demo-tvOSTests/Pods-platform_demo-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1EF4432A16FDE4BCE518EBB8 /* Pods-platform_demo-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-platform_demo-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-platform_demo-tvOS/Pods-platform_demo-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		1FC189E3885244798560F307 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
@@ -89,6 +88,7 @@
 		4AC4CC0E2269478185BAC7DE /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		4F4792C544D2420F8D0C13D2 /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		585D3CF72340E6D9005E1422 /* models */ = {isa = PBXFileReference; lastKnownFileType = folder; path = models; sourceTree = "<group>"; };
+		58ED018B2357840100C0AF8E /* libtflite-react-native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = "libtflite-react-native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BA8339092B2479ABC3C283A /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		5D55FB87F09273B9297BDEF3 /* Pods-platform_demo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-platform_demo.debug.xcconfig"; path = "Target Support Files/Pods-platform_demo/Pods-platform_demo.debug.xcconfig"; sourceTree = "<group>"; };
 		6F0A3FB5EF6D4D958A8FA8A4 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
@@ -180,6 +180,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				58ED018B2357840100C0AF8E /* libtflite-react-native.a */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				468A4B9AD8AD4BE25A4632E1 /* libPods-platform_demo.a */,
@@ -219,7 +220,6 @@
 		585D3CF02340E21B005E1422 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				1AEE3219058E4883A21FA031 /* libRNTensorflow.a */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -738,7 +738,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
-				DEAD_CODE_STRIPPING = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Z9479BG59N;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -751,8 +751,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.onepanel.demo.platform-demo";
 				PRODUCT_NAME = platform_demo;
+				STRIP_INSTALLED_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -763,6 +764,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = Z9479BG59N;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -770,13 +772,15 @@
 				);
 				INFOPLIST_FILE = platform_demo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.onepanel.demo.platform-demo";
 				PRODUCT_NAME = platform_demo;
+				STRIP_INSTALLED_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

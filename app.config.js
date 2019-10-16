@@ -27,6 +27,10 @@ export const Navigation = [
   {
     title: 'Feedback',
     description: ''
+  },
+  {
+    title: 'Free AI POC',
+    description: ''
   }
 ];
 

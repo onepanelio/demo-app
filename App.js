@@ -52,7 +52,10 @@ export default class App extends Component {
   onMenuItemSelected = (item) => {
     if (item === 'Feedback') {
       Linking.openURL('https://www.onepanel.io/contact');
-    } else {
+    } 
+    else if(item === 'Free AI POC') {
+      Linking.openURL('https://www.onepanel.io/campaigns/free-aimodels-lead');
+    }  else {
       this.setState({
         isOpen: false,
         selectedItem: item,

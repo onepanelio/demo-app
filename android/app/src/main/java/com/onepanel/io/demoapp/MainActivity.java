@@ -1,4 +1,4 @@
-package com.platform_demo;
+package com.onepanel.io.demoapp;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "platform_demo";
+        return "com.onepanel.io.demoapp";
     }
 }

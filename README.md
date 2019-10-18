@@ -1,5 +1,9 @@
 
 # Onepanel Demo Application
+
+You can find the full project (Jupyter notebooks, distrubuted jobs, NodeRed flows, etc..) that is forkable on Onepanel here:  https://c.onepanel.io/onepanel-demo/projects/mobile-demo/overview
+
+
 This app showcases a full pipeline, right from Data Captute using remote devices and uploading to Onepanel Datasets using API's hosted at Onepanel Workspaces, Using these data to annotate using CVAT at Onepanel at training model , deploying these models using API's and hopw to consume them using remote / Mobile devices. 
 
 This application is targeted to run on android and ios devices.

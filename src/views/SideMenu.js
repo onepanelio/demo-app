@@ -53,7 +53,7 @@ export default function Menu({ onItemSelected, selectedItem }) {
     <ScrollView scrollsToTop={false} style={styles.menu}>
       <View style={styles.avatarContainer}>
         <Image style={styles.avatar} source={OnePanelHeading} />
-        <Text style={styles.name}>Onepanel Demo Apis</Text>
+        <Text style={styles.name}>Onepanel API</Text>
       </View>
       <List>
         {menus.map((menu) => (

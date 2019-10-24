@@ -1,14 +1,18 @@
 
 # Onepanel Demo Application
-This app showcases a full pipeline, right from Data Captute using remote devices and uploading to Onepanel Datasets using API's hosted at Onepanel Workspaces, Using these data to annotate using CVAT at Onepanel at training model , deploying these models using API's and hopw to consume them using remote / Mobile devices. 
+
+You can find the full project (Jupyter notebooks, distributed jobs, NodeRed flows, etc..) that is forkable on Onepanel here:  https://c.onepanel.io/onepanel-demo/projects/mobile-demo/overview
+
+
+This app showcases a full pipeline, right from data captute using remote devices and uploading to Onepanel datasets using API's hosted at Onepanel workspaces, using these data to annotate using CVAT at Onepanel at training model , deploying these models using API's and how to consume them using remote / mobile devices. 
 
 This application is targeted to run on android and ios devices.
 
 Currently, the application host the following features,
 1. On-device object detection using SSD models trained on Onepanel.
 2. On-device object classification using models trained on Onepanel.
-3. Record & Upload video dataset  to train model running in upstream server hosted on Onepanel Workspaces.
-4. Configurable API endpoints to classify, detect and upload dataset. These API endpoints are hosted in Onepanel Workspaces.
+3. Record & Upload video dataset  to train model running in upstream server hosted on Onepanel workspaces.
+4. Configurable API endpoints to classify, detect and upload dataset. These API endpoints are hosted in Onepanel workspaces.
 5. Supports multiple model types  to run inference realtime on device. (currently not configurable) 
 
 ## App Structure

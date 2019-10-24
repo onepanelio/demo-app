@@ -130,7 +130,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.platform_demo"
+        applicationId "com.onepanel.io.demoapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

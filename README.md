@@ -110,7 +110,7 @@ Follow the guide [here](https://facebook.github.io/react-native/docs/running-on-
 * [Gradle](https://gradle.org/) - Dependency Management Android
 * [CocoaPods](https://cocoapods.org/)  Dependency Management for IOS
 ## Download
-![Download the Android App](/assets/androidapp (1).png) 
+![Download the Android App](/assets/androidapp.png) 
 ## Contributing
 
 ## Versioning
